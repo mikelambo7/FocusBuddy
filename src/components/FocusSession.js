@@ -27,4 +27,20 @@ const FocusSession = () => {
   );
 };
 
+const endSession = async () => {
+    const sessionData = {
+      startTime: new Date(startTime),
+      endTime: new Date(),
+      attentionSpans: attentionData, // Array of attention metrics
+    };
+  
+    await fetch('/api/sessions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(sessionData),
+    });
+  };
+
 export default FocusSession;
