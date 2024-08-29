@@ -1,0 +1,51 @@
+.dashboard-container {
+    padding: 0 20px;
+  }
+  
+  section h1{
+    background-color: #1C104C;
+    color: white;
+    font-family: "Rhodium Libre", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 24px;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    padding: 0.5rem 1.5rem;
+  }
+
+  .section-content, .chart {
+    padding: 0 1.5rem;
+  }
+  
+  .summary-section, .data-visualization, .recent-sessions {
+    margin: 20px 0;
+    padding: 0 0 0.5rem;
+    background-color: #B5C2E4;
+    border: none;
+    border-radius: 25px;
+  }
+
+
+  
+  .data-visualization .chart {
+    margin-bottom: 20px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  table th, table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  footer {
+    margin-top: 40px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    text-align: center;
+  }
+  
