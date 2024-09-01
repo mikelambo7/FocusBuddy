@@ -1,117 +1,95 @@
 .home-container {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    background-color: #6589E5;
-  }
-  
-  
-  main {
-    margin-top: 20px;
-    width: 100%;
-  }
+  flex-direction: column;
+  align-items: center;
+}
 
-  .title {
-    font-family: "Love Ya Like A Sister", cursive;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 88px;
-    color: white;
-    margin: 1px;
-  }
+main {
+  margin-top: 20px;
+  width: 100%;
+}
 
-  nav {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    background-color: #1C104C;
-    gap: 30vw;
-  }
+button img {
+  width: 3rem;
+  height: 3rem;
+  padding: 14px 0;
+  filter: invert(1) brightness(2.5);
+}
 
-  .tab {
-    font-family: "Love Ya Like A Sister", cursive;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 44px;
-    background-color: #1C104C;
-    color: #fff;
-    text-transform: capitalize;
-    border: none;
-    opacity: 0.5;
-  }
+.session {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-family: "Londrina Solid", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 22px;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  width: 16rem;
+  padding: 16px 0;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
 
-  .tab:hover, .tab.active{
-    cursor: pointer;
-    opacity: 1;
-  }
+.session.start {
+  background-color: #0A7B00;
+}
 
-  .session-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 25px auto;
-    width: 75%;
-    gap: 14vw;
-  }
+.session.end {
+  background-color: #C91313;
+}
 
-  .session {
-    font-family: "Rhodium Libre", serif;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 26px;
-    width: 16rem;
-    padding: 25px 15px 15px;
-    border-radius: 40px;
-    border: none;
-    cursor: pointer;
-  }
+.home-content {
+  display: flex;
+  align-items: center;
+  width: 70%;
+  margin: 4vh auto;
+  gap: 6vw;
+}
 
-  .session.start {
-    background-color: #0A7B00;
-    color: white;
-  }
+.recent-stats {
+  flex: 2;
+  text-align: center;
+  font-family: "Londrina Solid", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 26px;
+  width: 22rem;
+  padding: 20px 15px;
+  border-radius: 40px;
+  border: none;
+  background-color: #B5C2E4;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
 
-  .session.end {
-    background-color: #ADACAC;
-    color: #767070;
-  }
+.content-header {
+  color: #1C104C;
+  font-size: 30px;
+  font-weight: 400;
+}
 
-  .home-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 75%;
-    margin: 12vh auto;
-    gap: 14vw;
-  }
+.focus-tip {
+  font-family: "Londrina Solid", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 18px;
+  width: 80%;
+  background-color: #0C0233;
+  color: white;
+  padding: 15px 55px;
+  margin: 12vh auto 1vh;
+  border: 2px solid white;
+  border-radius: 60px;
+}
 
-  .recent-stats, .focus-tip {
-    text-align: center;
-    font-family: "Rhodium Libre", serif;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 20px;
-    width: 22rem;
-    padding: 20px 30px 10px;
-    border-radius: 40px;
-    border: none;
-    background-color: #B5C2E4; 
-  }
+.focus-tip-heading {
+  color: #15B926;
+  text-transform: capitalize;
+}
 
-  .content-header {
-    color: #1C104C;
-    font-weight: 800;
-  }
-
-  .focus-tip-heading {
-    color: #004807;
-    font-weight: 800;
-    text-transform: capitalize;
-  }
+.focus-tip p {
+  margin: 0;
+}

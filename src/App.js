@@ -20,27 +20,31 @@ function App() {
   return (
     <div className="app-container">
       <header>
-        <h1 className="title">Focus Buddy</h1>
+        <h1 className="title">Focus Buddy !</h1>
       </header>
 
       <nav>
-          <button 
-            className={`tab ${activeTab === 'home' ? 'active' : ''}`} 
-            onClick={() => setActiveTab('home')}
-          >
-            Home
-          </button>
-          <button 
-            className={`tab ${activeTab === 'dashboard' ? 'active' : ''}`} 
-            onClick={() => setActiveTab('dashboard')}
-          >
-            Dashboard
-          </button>
-        </nav>
-      
+        <button
+          className={`tab ${activeTab === 'home' ? 'active' : ''}`}
+          onClick={() => setActiveTab('home')}
+        >
+          Home
+        </button>
+        <button
+          className={`tab ${activeTab === 'dashboard' ? 'active' : ''}`}
+          onClick={() => setActiveTab('dashboard')}
+        >
+          Dashboard
+        </button>
+      </nav>
+
       <main>
         {renderContent()}
       </main>
+
+      <footer className="footer">
+        <p>Designed & <span role="img" aria-label="Coded">👨‍💻</span> by Michael Lambo</p>
+      </footer>
     </div>
   );
 }

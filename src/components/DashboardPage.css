@@ -1,13 +1,14 @@
 .dashboard-container {
     padding: 0 20px;
+    font-family: "Londrina Solid", sans-serif;
+    font-weight: 300;
+    font-style: normal;
   }
   
   section h1{
     background-color: #1C104C;
     color: white;
-    font-family: "Rhodium Libre", serif;
     font-weight: 400;
-    font-style: normal;
     font-size: 24px;
     border-top-left-radius: 25px;
     border-top-right-radius: 25px;
@@ -26,15 +27,20 @@
     border-radius: 25px;
   }
 
-
-  
   .data-visualization .chart {
     margin-bottom: 20px;
   }
   
   table {
-    width: 100%;
+    width: 98%;
+    margin: auto;
     border-collapse: collapse;
+  }
+
+  table th {
+    color: #540000;
+    font-weight: 300;
+    font-size: 22px;
   }
   
   table th, table td {
