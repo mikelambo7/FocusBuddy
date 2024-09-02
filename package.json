@@ -12,6 +12,7 @@
     "chart.js": "^4.4.4",
     "express": "^4.19.2",
     "mongoose": "^8.5.4",
+    "opencv.js": "^1.2.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.1",
@@ -19,8 +20,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts --max-old-space-size=8192 start",
+    "build": "react-scripts --max-old-space-size=8192 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

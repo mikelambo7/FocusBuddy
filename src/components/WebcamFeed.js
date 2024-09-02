@@ -58,7 +58,7 @@ const WebcamFeed = ({ onFaceDetected }) => {
     const interval = setInterval(detectFace, 100);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [onFaceDetected]);
 
   return <video ref={videoRef} autoPlay></video>;
 };
