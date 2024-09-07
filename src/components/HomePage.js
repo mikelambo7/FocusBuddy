@@ -21,6 +21,9 @@ const HomePage = () => {
               <span>Start session</span>
             </button>
           )}
+          
+          {sessionActive && <FocusSession setSessionActive={setSessionActive} />}
+
           <div className="recent-stats">
             <p className="content-header">Recent Focus Stats:</p>
             <p>Total Focused Time: 120 mins</p>
@@ -28,8 +31,6 @@ const HomePage = () => {
             <p>Focus lost every: 40 mins</p>
           </div>
         </div>
-
-        {sessionActive && <FocusSession />}
 
         <div className="focus-tip">
           <p className="focus-tip-heading">daily focus tip!</p>

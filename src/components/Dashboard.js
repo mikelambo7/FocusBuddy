@@ -16,7 +16,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const ctx = document.getElementById('attentionChart').getContext('2d');
-    new Chart(ctx, {
+    let chartInstance = new Chart(ctx, {
       type: 'line',
       data: {
         labels: data.map((session) => new Date(session.startTime).toLocaleTimeString()),
@@ -28,6 +28,9 @@ const Dashboard = () => {
         }],
       },
     });
+
+    // Cleanup to avoid re-rendering multiple charts
+    return () => chartInstance.destroy();
   }, [data]);
 
   return <canvas id="attentionChart"></canvas>;

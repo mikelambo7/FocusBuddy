@@ -25,7 +25,7 @@ header {
   background: #fff;
   background-clip: text;
   -webkit-background-clip: text;
-  -webkit-text-stroke: 8px transparent;
+  -webkit-text-stroke: 6px transparent;
   margin: 8px;
 }
 

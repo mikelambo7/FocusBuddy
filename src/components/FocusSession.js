@@ -2,14 +2,15 @@ import React, { useCallback, useEffect, useState } from 'react';
 import WebcamFeed from './WebcamFeed';
 import './HomePage.css';
 
-const FocusSession = () => {
+const FocusSession = ({ setSessionActive }) => {
   const [alert, setAlert] = useState(false);
   const [sessionStarted, setSessionStarted] = useState(false);
   const [startTime, setStartTime] = useState(null); // Initialize startTime state
   const [attentionData, setAttentionData] = useState([]);
-  let noFaceTime = 0;
 
   const handleFaceDetected = useCallback((isDetected) => {
+    let noFaceTime = 0;
+
     if (!isDetected) {
       noFaceTime += 1;
     } else {
@@ -21,7 +22,7 @@ const FocusSession = () => {
     } else {
       setAlert(false);
     }
-  }, [noFaceTime]);
+  }, []);
 
   useEffect(() => {
     setSessionStarted(true);
@@ -47,19 +48,23 @@ const FocusSession = () => {
         },
         body: JSON.stringify(sessionData),
       });
+
+      setSessionActive(false); 
     } catch (error) {
       console.error('Failed to save session data:', error);
     }
   };
 
   return (
-    <div>
-      <WebcamFeed onFaceDetected={handleFaceDetected} />
-      {alert && <div className="alert">Are you still there?</div>}
+    <div className="focus-session-container">
       {sessionStarted && (<button className="session end" onClick={endSession}>
         <img src="/circle-stop.svg" alt="Icon" />
         <span>End session</span>
       </button>)}
+      <div className="webcam-feed">
+        <WebcamFeed onFaceDetected={handleFaceDetected} />
+      </div>
+      {alert && <div className="alert">Are you still there?</div>}
     </div>
   );
 };
