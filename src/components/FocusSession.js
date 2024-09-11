@@ -3,12 +3,13 @@ import WebcamFeed from './WebcamFeed';
 import './HomePage.css';
 
 const FocusSession = ({ setSessionActive }) => {
-  const [alert, setAlert] = useState(false);
-  const [sessionStarted, setSessionStarted] = useState(false);
-  const [startTime, setStartTime] = useState(null); // Initialize startTime state
-  const [attentionData, setAttentionData] = useState([]);
+  const [alert, setAlert] = useState(false); // Alert to be shown when no face detected
+  const [sessionStarted, setSessionStarted] = useState(false); // Keeps track of whether the session is started or not
+  const [startTime, setStartTime] = useState(null); // Initialize startTime state to store timme a session starts
+  const [attentionData, setAttentionData] = useState([]); // Initialize array to store attention metrics for a session
 
-  const handleFaceDetected = useCallback((isDetected) => {
+  /* To process whether a face has been detected by the webcam */
+  const handleFaceDetected = useCallback((isDetected) => { // useCallback ensures function is memoized and not recreated on every render
     let noFaceTime = 0;
 
     if (!isDetected) {
@@ -17,7 +18,7 @@ const FocusSession = ({ setSessionActive }) => {
       noFaceTime = 0;
     }
 
-    if (noFaceTime > 10) { // Trigger alert after 10 seconds of no face detection
+    if (noFaceTime > 3) { // Trigger alert after 3 seconds of no face detection
       setAlert(true);
     } else {
       setAlert(false);
@@ -26,7 +27,7 @@ const FocusSession = ({ setSessionActive }) => {
 
   useEffect(() => {
     setSessionStarted(true);
-    setStartTime(new Date()); // Set the session's start time
+    setStartTime(new Date()); // Set the session's start time as the current time
   }, []);
 
   const endSession = async () => {
