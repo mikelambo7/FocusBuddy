@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 // Import the 'express' module which provides the web framework.
 const express = require('express');
 
@@ -11,9 +13,13 @@ const app = express();
 app.use(express.json());
 
 // Connect to a MongoDB database using Mongoose.
-mongoose.connect('focus-buddy-database', {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+}).then(() => {
+  console.log('MongoDB connected');
+}).catch(err => {
+  console.error('MongoDB connection error:', err);
 });
 
 // Define a Mongoose schema for the session data.
