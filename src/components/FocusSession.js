@@ -94,13 +94,13 @@ const FocusSession = ({ setSessionActive }) => {
           <div className='alert'>Are you still there?</div>
         </div>} */}
 
-      {(
+      {showNotification && (
         <div className="notification-bar">
           Session saved successfully!
         </div>
       )}
 
-      {(
+      {sessionStats && (
         <div className="session-stats-container">
           <div className="session-stats">
             <h2>Session Stats</h2>
