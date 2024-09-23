@@ -1,11 +1,24 @@
 .app-container {
-  background-image: url('focus-buddy-background.jpg');
-  background-size: cover;
+  background: linear-gradient(135deg, #041f72, #405da7);
+  background-size: 300% 300%;
+  animation: gradientAnimation 5s ease infinite;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   max-width: 100vw;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 header {

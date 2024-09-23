@@ -39,7 +39,6 @@ button img {
 
 .session.end {
   background-color: #C91313;
-  margin-bottom: 20px;
 }
 
 .home-content {
@@ -172,5 +171,9 @@ button img {
 }
 
 .session-stats button:hover {
-  background-color: #45a049; /* Darker green on hover */
+  background-color: #45a049;
+}
+
+.session-stats p.session-analysis-text {
+  color: rgb(129, 16, 16);
 }

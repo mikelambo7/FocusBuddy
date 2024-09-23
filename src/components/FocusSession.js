@@ -91,7 +91,7 @@ const FocusSession = ({ setSessionActive }) => {
 
   // Calculates the percentage of a session the user was unfocused
   const calculateUnfocusedPercentage = (sessionTime, unfocusedTime) => {
-    if (sessionTime === 0) return 0; // To avoid division by zero
+    if (sessionTime === 0) return 0;
     return ((unfocusedTime / sessionTime) * 100).toFixed(2);
   };
 
@@ -119,7 +119,7 @@ const FocusSession = ({ setSessionActive }) => {
             <p>Time Focused: {formatTime(sessionStats.totalSessionTime - sessionStats.totalTimeUnfocused)}</p>
             <p>Total Times Focus Lost: {formatTime(sessionStats.totalFocusLost)}</p>
 
-            <p>You were unfocused for a total of {calculateUnfocusedPercentage(sessionStats.totalSessionTime, sessionStats.totalTimeUnfocused)}% of your session</p>
+            <p className="session-analysis-text">You were unfocused for a total of {calculateUnfocusedPercentage(sessionStats.totalSessionTime, sessionStats.totalTimeUnfocused)}% of your session</p>
             <button onClick={() => setSessionStats(null)}>Continue</button>
           </div>
         </div>
