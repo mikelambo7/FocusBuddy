@@ -5,14 +5,11 @@ import './HomePage.css';
 
 const FocusSession = ({ setSessionActive }) => {
   const [startTime, setStartTime] = useState(null); // Initialize startTime state to store timme a session starts
-  const [attentionData, setAttentionData] = useState([]); // Initialize array to store attention metrics for a session
   const [noFaceTime, setNoFaceTime] = useState(0); // Time without face detection
-  const [focusLostCount, setFocusLostCount] = useState(0); // Counter for each time user loses focus
+  const [alertsTriggered, setAlertsTriggered] = useState(0); // Counter for each time user loses focus
   const [totalUnfocusedTime, setTotalUnfocusedTime] = useState(0); // Cumulative unfocused time in seconds/minutes/hours
   const [sessionStats, setSessionStats] = useState(null);
   const [showNotification, setShowNotification] = useState(false); // Notification displayed for when a session is saved successfully
-
-  const alertSound = new Audio(pingSound);
 
   /* To process whether a face has been detected by the webcam */
   const handleFaceDetected = useCallback((isDetected) => { // useCallback ensures function is memoized and not recreated on every render
@@ -25,11 +22,13 @@ const FocusSession = ({ setSessionActive }) => {
   }, []);
 
   useEffect(() => {
+    const alertSound = new Audio(pingSound);
+
     // Check every second if no face is detected for more than 3 seconds
     const interval = setInterval(() => {
       if (noFaceTime > 0) {
         alertSound.play();
-        setFocusLostCount(prevCount => prevCount + 1); // Increment focus lost count if face isn't detected for more than 3 seconds
+        setAlertsTriggered(prevCount => prevCount + 1); // Increment focus lost count if face isn't detected for more than 3 seconds
         setNoFaceTime(0); // Reset noFaceTime after logging the loss of focus
       }
     }, 1000);
@@ -42,13 +41,16 @@ const FocusSession = ({ setSessionActive }) => {
   }, []);
 
   const endSession = async () => {
+    const endTime = new Date();
+
     const sessionData = {
       startTime: new Date(startTime),
-      endTime: new Date(),
-      attentionSpans: attentionData, // Array of attention metrics
-      totalSessionTime: Math.floor((new Date() - startTime) / 1000), // in seconds
+      endTime: endTime,
+      totalSessionTime: Math.floor((endTime - startTime) / 1000), // in seconds
       totalTimeUnfocused: totalUnfocusedTime, // in seconds
-      totalFocusLost: focusLostCount,
+      totalTimeFocused: Math.floor((endTime - startTime) / 1000) - totalUnfocusedTime,
+      numberOfAlerts: alertsTriggered,
+      focusPercent: ((Math.floor((endTime - startTime) / 1000) - totalUnfocusedTime) / (Math.floor((endTime - startTime) / 1000))) * 100,
     };
 
     try {
@@ -75,8 +77,6 @@ const FocusSession = ({ setSessionActive }) => {
       } else {
         console.error('Failed to save session data');
       }
-
-      setSessionActive(false);
     } catch (error) {
       console.error('Failed to save session data:', error);
     }
@@ -97,14 +97,6 @@ const FocusSession = ({ setSessionActive }) => {
 
   return (
     <div className="focus-session-container">
-      <button className="session end" onClick={endSession}>
-        <img src="/circle-stop.svg" alt="Icon" />
-        <span>End session</span>
-      </button>
-      {/* <div className="webcam-feed">
-        <WebcamFeed onFaceDetected={handleFaceDetected} />
-      </div> */}
-
       {showNotification && (
         <div className="notification-bar">
           Session saved successfully!
@@ -117,12 +109,29 @@ const FocusSession = ({ setSessionActive }) => {
             <h2>Session Stats</h2>
             <p>Total Session Time: {formatTime(sessionStats.totalSessionTime)}</p>
             <p>Time Focused: {formatTime(sessionStats.totalSessionTime - sessionStats.totalTimeUnfocused)}</p>
-            <p>Total Times Focus Lost: {formatTime(sessionStats.totalFocusLost)}</p>
+            <p>Total Alerts Triggered: {formatTime(sessionStats.numberOfAlerts)}</p>
 
             <p className="session-analysis-text">You were unfocused for a total of {calculateUnfocusedPercentage(sessionStats.totalSessionTime, sessionStats.totalTimeUnfocused)}% of your session</p>
-            <button onClick={() => setSessionStats(null)}>Continue</button>
+            <button onClick={() => {
+              setSessionStats(null);
+              setSessionActive(false);
+            }}>
+              Continue
+            </button>
           </div>
         </div>
+      )}
+
+      {!sessionStats && (
+        <>
+          <button className="session end" onClick={endSession}>
+            <img src="/circle-stop.svg" alt="Icon" />
+            <span>End session</span>
+          </button>
+          <div className="webcam-feed">
+            <WebcamFeed onFaceDetected={handleFaceDetected} />
+          </div>
+        </>
       )}
     </div>
   );

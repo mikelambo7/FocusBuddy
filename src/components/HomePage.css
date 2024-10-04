@@ -8,6 +8,10 @@ main {
   width: 100%;
 }
 
+body {
+  font-family: "Roboto", sans-serif;
+}
+
 button img {
   width: 3rem;
   height: 3rem;
@@ -18,8 +22,7 @@ button img {
 .session {
   display: flex;
   flex-direction: column;
-  font-family: "Londrina Solid", sans-serif;
-  font-weight: 400;
+  font-weight: 500;
   font-style: normal;
   font-size: 22px;
   justify-content: center;
@@ -52,10 +55,9 @@ button img {
 
 .recent-stats {
   text-align: center;
-  font-family: "Londrina Solid", sans-serif;
-  font-weight: 300;
+  font-weight: 400;
   font-style: normal;
-  font-size: 26px;
+  font-size: 22px;
   width: 50rem;
   padding: 20px 15px;
   border-radius: 40px;
@@ -67,14 +69,13 @@ button img {
 .content-header {
   color: #1C104C;
   font-size: 30px;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .focus-tip {
-  font-family: "Londrina Solid", sans-serif;
   font-weight: 400;
   font-style: normal;
-  font-size: 18px;
+  font-size: 16px;
   width: 80%;
   background-color: #0C0233;
   color: white;
@@ -99,16 +100,8 @@ button img {
   align-items: center;
 }
 
-.webcam-feed {
-  width: 80%;
-  border: 1px solid #ccc;
-  overflow: hidden;
-}
-
 .webcam-feed video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  display: none;
 }
 
 .notification-bar {

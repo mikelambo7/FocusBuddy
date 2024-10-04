@@ -1,57 +1,105 @@
 .dashboard-container {
-    padding: 0 20px;
-    font-family: "Londrina Solid", sans-serif;
-    font-weight: 300;
-    font-style: normal;
-  }
-  
-  section h1{
-    background-color: #1C104C;
-    color: white;
-    font-weight: 400;
-    font-size: 24px;
-    border-top-left-radius: 25px;
-    border-top-right-radius: 25px;
-    padding: 0.5rem 1.5rem;
-  }
+  padding: 0 20px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
 
-  .section-content, .chart {
-    padding: 0 1.5rem;
-  }
-  
-  .summary-section, .data-visualization, .recent-sessions {
-    margin: 20px 0;
-    padding: 0 0 0.5rem;
-    background-color: #B5C2E4;
-    border: none;
-    border-radius: 25px;
-  }
+section h1 {
+  background-color: #1C104C;
+  color: white;
+  font-weight: 600;
+  font-size: 24px;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  text-align: center;
+  padding: 1rem 0;
+}
 
-  .data-visualization .chart {
-    margin-bottom: 20px;
-  }
-  
-  table {
-    width: 98%;
-    margin: auto;
-    border-collapse: collapse;
-  }
+.section-content {
+  padding: 0 5.5rem;
+}
 
-  table th {
-    color: #540000;
-    font-weight: 300;
-    font-size: 22px;
-  }
-  
-  table th, table td {
-    padding: 10px;
-    border: 1px solid #ddd;
-  }
-  
-  footer {
-    margin-top: 40px;
-    padding: 10px;
-    background-color: #f8f9fa;
-    text-align: center;
-  }
-  
+.summary-section,
+.data-visualization,
+.recent-sessions {
+  margin: 40px 0;
+  padding: 0 0 0.5rem;
+  background-color: #B5C2E4;
+  border: none;
+  border-radius: 25px;
+}
+
+.summary-section {
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.chart-container {
+  padding: 10px 150px;
+}
+
+.chart-toggle {
+  display: flex;
+  margin-bottom: 20px;
+  justify-content: center;
+  gap: 5rem;
+}
+
+.chart-toggle button {
+  padding: 10px 15px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  transition: background-color 0.3s;
+}
+
+.chart-toggle button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.chart-toggle button:hover:not(.active) {
+  background-color: #e0e0e0;
+}
+
+.chart {
+  width: 65%;
+  margin: 0 auto;
+}
+
+.chart-text {
+  display: flex;
+  justify-content: center;
+}
+
+table {
+  width: 98%;
+  margin: auto auto 15px;
+  border-collapse: collapse;
+}
+
+table th {
+  color: #1C104C;
+  font-weight: 400;
+  font-size: 20px;
+}
+
+table th,
+table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.no-session-text {
+  padding-left: 30px;
+}
+
+footer {
+  margin-top: 40px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  text-align: center;
+}

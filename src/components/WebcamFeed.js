@@ -3,17 +3,22 @@ import cv from 'opencv.js';
 
 const WebcamFeed = ({ onFaceDetected }) => {
   const videoRef = useRef(null);
+  const streamRef = useRef(null);  // To store the webcam media stream
 
   useEffect(() => {
     // Provides access to the user's webcam and streams the video feed to an HTML video element
     navigator.mediaDevices.getUserMedia({ video: true }) // Prompts the user for permission to access the webcam.
       .then(stream => {
         videoRef.current.srcObject = stream; // Sets the srcObject of the video element to the MediaStream obtained from the user's webcam
-      });
+        streamRef.current = stream;  // Store the media stream in a ref for later cleanup
+      })
+      .catch(err => console.error('Error accessing webcam:', err));
 
     const detectFace = () => {
         // Gives access to the video feed from the user's webcam.
         const video = videoRef.current;
+        // Ensure video is ready.
+        if (!video || video.readyState !== 4) return; 
         // Creates an element in memory that will be used to draw and manipulate the current video frame for further processing.
         const canvas = document.createElement('canvas');
         // Set the width and height of the canvas to match the resolution of the video feed.
@@ -57,7 +62,14 @@ const WebcamFeed = ({ onFaceDetected }) => {
     // Set up an interval to repeatedly check for face detection
     const interval = setInterval(detectFace, 100);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);  // Clear face detection interval
+
+      // Stop all tracks of the media stream to properly turn off the webcam
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
   }, [onFaceDetected]);
 
   return <video ref={videoRef} autoPlay></video>;

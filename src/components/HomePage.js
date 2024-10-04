@@ -1,12 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FocusSession from './FocusSession';
+import recordingStartedAudio from './assets/recording_started.wav';
 import './HomePage.css';
 
 const HomePage = () => {
   const [sessionActive, setSessionActive] = useState(false);
+  const [recentStats, setRecentStats] = useState(null);
+
+  useEffect(() => {
+    const fetchRecentSession = async () => {
+      try {
+        const response = await fetch('/api/sessions/latest');
+        if (response.ok) {
+          const data = await response.json();
+          setRecentStats(data);
+        } else {
+          console.error('Failed to fetch latest session');
+        }
+      } catch (error) {
+        console.error('Error fetching recent session:', error);
+      }
+    };
+
+    fetchRecentSession();
+  }, []);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins} min ${secs} sec`;
+  };
 
   const handleButtonClick = () => {
     if (!sessionActive) {
+      // "Recording started" audio
+      const recordingStarted = new Audio(recordingStartedAudio);
+      recordingStarted.play();
       setSessionActive(true);
     }
   };
@@ -21,14 +50,23 @@ const HomePage = () => {
               <span>Start session</span>
             </button>
           )}
-          
+
           {sessionActive && <FocusSession setSessionActive={setSessionActive} />}
 
           <div className="recent-stats">
             <p className="content-header">Recent Focus Stats:</p>
-            <p>Total Focused Time: 120 mins</p>
-            <p>Number of Alerts: 3</p>
-            <p>Focus lost every: 40 mins</p>
+            {recentStats ? (
+              <>
+                <p>Total Session Time: {formatTime(recentStats.totalSessionTime)}</p>
+                <p>Total Focused Time: {formatTime(recentStats.totalTimeFocused)}</p>
+                <p>Number of Alerts: {recentStats.numberOfAlerts}</p>
+                {recentStats.totalSessionTime !== 0 && recentStats.numberOfAlerts !== 0 && (
+                  <p>Focus lost every: {formatTime(recentStats.totalSessionTime / recentStats.numberOfAlerts)}</p>
+                )}
+              </>
+            ) : (
+              <p>No session has been recorded yet.</p>
+            )}
           </div>
         </div>
 

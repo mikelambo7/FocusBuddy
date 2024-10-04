@@ -26,7 +26,11 @@ mongoose.connect(process.env.MONGO_URI, {
 const sessionSchema = new mongoose.Schema({
   startTime: Date,
   endTime: Date,
-  attentionSpans: [Number], // Store attention metrics for each session
+  totalSessionTime: Number,
+  totalTimeUnfocused: Number,
+  totalTimeFocused: Number,
+  numberOfAlerts: Number,
+  focusPercent: Number,
 });
 
 // Create a Mongoose model based on the sessionSchema.
@@ -40,5 +44,57 @@ app.post('/api/sessions', async (req, res) => {
   res.status(201).send(session);
 });
 
-// Start the Express server on port 5000 and log a message indicating the server is running.
-app.listen(5000, () => console.log('Server running on port 5000'));
+// Start the Express server on a specified port and log a message indicating the server is running.
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Route to get all session data
+app.get('/api/sessions', async (req, res) => {
+  try {
+    // Fetch all session documents from the database
+    const sessions = await Session.find();
+    
+    let totalSessionTime = 0;
+    let totalFocusTime = 0;
+    let totalAlerts = 0;
+
+    sessions.forEach(session => {
+      const sessionDuration = Math.floor((new Date(session.endTime) - new Date(session.startTime)) / 1000); // total time in seconds
+      totalSessionTime += sessionDuration;
+
+      totalFocusTime += session.totalTimeFocused;
+
+      totalAlerts += session.numberOfAlerts;
+    });
+
+    const averageFocusPercentage = totalSessionTime ? (totalFocusTime / totalSessionTime) * 100 : 0;
+
+    res.status(200).json({
+      sessions,
+      totalSessionTime,
+      totalFocusTime,
+      totalAlerts,
+      averageFocusPercentage
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Failed to fetch session data');
+  }
+});
+
+// Route to get the most recent session
+app.get('/api/sessions/latest', async (req, res) => {
+  try {
+    // Fetch the most recent session, sorted by startTime in descending order
+    const latestSession = await Session.findOne().sort({ startTime: -1 });
+
+    if (!latestSession) {
+      return res.status(404).send('No session found');
+    }
+
+    res.status(200).json(latestSession);
+  } catch (error) {
+    console.error('Failed to fetch the latest session:', error);
+    res.status(500).send('Server error');
+  }
+});
