@@ -12,7 +12,7 @@ const DashboardPage = () => {
     averageFocusPercentage: 0,
     averageFocusTime: 0,
   });
-  const recentSessions = sessions.slice(-10); // Get the last 10 sessions, if there are fewer, show all
+  const recentSessions = sessions.slice(-10).reverse(); // Get the last 10 sessions, if there are fewer, show all
 
 
   useEffect(() => {

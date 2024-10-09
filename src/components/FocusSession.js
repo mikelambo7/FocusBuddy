@@ -77,7 +77,7 @@ const FocusSession = ({ setSessionActive }) => {
         // Hide the notification after 3 seconds
         setTimeout(() => {
           setShowNotification(false);
-        }, 3000);
+        }, 2000);
 
         // After the notification, show session stats in a modal
         setSessionStats(sessionData);
@@ -110,7 +110,7 @@ const FocusSession = ({ setSessionActive }) => {
             <h2>Session Stats</h2>
             <p>Total Session Time: {formatTime(sessionStats.totalSessionTime)}</p>
             <p>Time Focused: {formatTime(sessionStats.totalSessionTime - sessionStats.totalTimeUnfocused)}</p>
-            <p>Total Alerts Triggered: {formatTime(sessionStats.numberOfAlerts)}</p>
+            <p>Total Alerts Triggered: {sessionStats.numberOfAlerts}</p>
 
             <p className="session-analysis-text">You were focused for a total of {`${sessionStats.focusPercent.toFixed(2)}%`} of your session</p>
             <button onClick={() => {

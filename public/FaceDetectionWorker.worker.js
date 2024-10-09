@@ -12,6 +12,7 @@ function loadCascadeFile(url, filename, callback) {
     if (this.status === 200) {
       let data = new Uint8Array(this.response);
       cv.FS_createDataFile('/', filename, data, true, false, false);
+      console.log(`Loaded cascade file: ${filename}`);
       callback();
     } else {
       console.error('Failed to load ' + url);
@@ -22,13 +23,16 @@ function loadCascadeFile(url, filename, callback) {
 
 // Use the function to load the classifier
 cv.onRuntimeInitialized = () => {
+  console.log('OpenCV.js initialized in worker');
   loadCascadeFile('/haarcascade_frontalface_default.xml', 'haarcascade_frontalface_default.xml', () => {
     // Loads a pre-trained face detection model into the classifier that can detect faces in images
     let classifier = new cv.CascadeClassifier();
     classifier.load('haarcascade_frontalface_default.xml');
+    console.log('Classifier loaded');
 
     // Set up the message handler
     self.onmessage = function (e) {
+      console.log('Received image data for face detection');
       // Obtain the image data that needs to be processed for face detection
       const imageData = e.data;
       // Converts the ImageData object into an OpenCV Mat (matrix) object which prepares it for processing with OpenCV functions
@@ -44,6 +48,7 @@ cv.onRuntimeInitialized = () => {
       classifier.detectMultiScale(gray, faces);
 
       let faceDetected = faces.size() > 0;
+      console.log(`Face detected: ${faceDetected}`);
       // Sends a message back to the main thread containing the result of the face detection.
       postMessage(faceDetected);
 
