@@ -51,12 +51,12 @@ const DashboardPage = () => {
       <section className="summary-section">
         <h1>Summary</h1>
         <div className="section-content">
-          <p><b>Total Session Time:</b> {formatTime(summaryData.totalSessionTime)}</p>
-          <p><b>Total Focus Time:</b> {formatTime(summaryData.totalFocusTime)}</p>
-          <p><b>Number of Alerts triggered:</b> {summaryData.totalAlerts}</p>
+          <p><b>Overall Session Time:</b> {formatTime(summaryData.totalSessionTime)}</p>
+          <p><b>Overall Focus Time:</b> {formatTime(summaryData.totalFocusTime)}</p>
+          <p><b>Overall Number of Alerts triggered:</b> {summaryData.totalAlerts}</p>
           <p><b>Average Focus Percentage:</b> {`${summaryData.averageFocusPercentage.toFixed(2)}%`}</p>
           {summaryData.averageFocusTime !== 0 && (
-            <p><b>You lose focus every:</b> {formatTime(summaryData.averageFocusTime)}</p>
+            <p><b>You Lose Focus Every:</b> {formatTime(summaryData.averageFocusTime)}</p>
           )}
         </div>
       </section>
@@ -96,10 +96,10 @@ const DashboardPage = () => {
           <table>
             <thead>
               <tr>
-                <th>Session Start</th>
-                <th>Session End</th>
-                <th>Focus Duration</th>
-                <th>Alerts Triggered</th>
+                <th><b>Session started</b></th>
+                <th><b>Session End</b></th>
+                <th><b>Focus Duration</b></th>
+                <th><b>Alerts Triggered</b></th>
               </tr>
             </thead>
             <tbody>
@@ -108,7 +108,7 @@ const DashboardPage = () => {
                   <td>{new Date(session.startTime).toLocaleTimeString()}</td>
                   <td>{new Date(session.endTime).toLocaleTimeString()}</td>
                   <td>{formatTime(session.totalTimeFocused)}</td>
-                  <td>{session.alertTriggered}</td>
+                  <td>{session.numberOfAlerts}</td>
                 </tr>
               ))}
             </tbody>
