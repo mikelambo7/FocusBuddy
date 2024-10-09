@@ -1,4 +1,3 @@
-/* eslint-env worker */
 /* global cv */
 
 // Load OpenCV.js library into the Web Worker 
