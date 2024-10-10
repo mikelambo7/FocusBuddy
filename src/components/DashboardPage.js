@@ -27,7 +27,7 @@ const DashboardPage = () => {
             totalFocusTime: data.totalFocusTime,
             totalAlerts: data.totalAlerts,
             averageFocusPercentage: data.averageFocusPercentage,
-            averageFocusTime: data.totalSessionTime !== 0 && data.totalAlerts !== 0 ? (data.totalSessionTime / data.totalAlerts) : 0,
+            averageFocusTime: data.totalSessionTime !== 0 && data.totalAlerts !== 0 ? (Math.floor(data.totalSessionTime / data.totalAlerts)) : 0,
           });
         } else {
           console.error('Failed to fetch sessions');

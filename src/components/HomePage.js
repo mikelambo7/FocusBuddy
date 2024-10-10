@@ -61,7 +61,7 @@ const HomePage = () => {
                 <p>Total Focused Time: {formatTime(recentStats.totalTimeFocused)}</p>
                 <p>Number of Alerts: {recentStats.numberOfAlerts}</p>
                 {recentStats.totalSessionTime !== 0 && recentStats.numberOfAlerts !== 0 && (
-                  <p>Focus lost every: {formatTime(recentStats.totalSessionTime / recentStats.numberOfAlerts)}</p>
+                  <p>Focus Lost Every: {formatTime(Math.floor(recentStats.totalSessionTime / recentStats.numberOfAlerts))}</p>
                 )}
               </>
             ) : (

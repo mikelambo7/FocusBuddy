@@ -6,42 +6,41 @@ import './HomePage.css';
 const FocusSession = ({ setSessionActive }) => {
   const [startTime, setStartTime] = useState(null); // Initialize startTime state to store timme a session starts
   const [noFaceTime, setNoFaceTime] = useState(0); // Time without face detection
-  const noFaceTimeRef = useRef(noFaceTime);
   const [alertsTriggered, setAlertsTriggered] = useState(0); // Counter for each time user loses focus
   const [totalUnfocusedTime, setTotalUnfocusedTime] = useState(0); // Cumulative unfocused time in seconds/minutes/hours
   const [sessionStats, setSessionStats] = useState(null);
   const [showNotification, setShowNotification] = useState(false); // Notification displayed for when a session is saved successfully
   const alertSoundRef = useRef(new Audio(pingSound));
+  const noFaceDetectedRef = useRef(false); // Flag to track face detection
 
   /* To process whether a face has been detected by the webcam */
   const handleFaceDetected = useCallback((isDetected) => { // useCallback ensures function is memoized and not recreated on every render
-    if (!isDetected) {
-      setNoFaceTime(prevTime => prevTime + 1); // Increment noFaceTime by 1 second
-      setTotalUnfocusedTime(prevTime => prevTime + 1) // Increment total unfocused time
-    } else {
-      setNoFaceTime(0); // Reset noFaceTime when face is detected
-    }
+    noFaceDetectedRef.current = !isDetected; // Store whether the face is detected
   }, []);
-
-  useEffect(() => {
-    noFaceTimeRef.current = noFaceTime;
-  }, [noFaceTime]);
 
   useEffect(() => {
     const alertSound = alertSoundRef.current;
     alertSound.load(); // Preload sound
 
-    // Check every second if no face is detected for more than 3 seconds
+    // Check every second to see if face is detected
     const interval = setInterval(() => {
-      if (noFaceTimeRef.current > 0) {
-        alertSound.play();
-        setAlertsTriggered(prevCount => prevCount + 1); // Increment focus lost count if face isn't detected for more than 3 seconds
-        setNoFaceTime(0); // Reset noFaceTime after logging the loss of focus
-      }
-    }, 1000);
+      if (noFaceDetectedRef.current) {
+        setNoFaceTime((prevTime) => prevTime + 1); // Increment noFaceTime by 1 second
+        setTotalUnfocusedTime((prevTime) => prevTime + 1); // Increment unfocused time by 1 second
 
-    return () => clearInterval(interval);
-  }, []);
+        // If no face is detected for 3 seconds, trigger alert
+        if (noFaceTime === 3) {
+          alertSound.play();
+          setAlertsTriggered((prevCount) => prevCount + 1); // Increment focus lost count
+          setNoFaceTime(0); // Reset noFaceTime after logging the loss of focus
+        }
+      } else {
+        setNoFaceTime(0); // Reset noFaceTime if face is detected
+      }
+    }, 1000); // Check every second
+
+    return () => clearInterval(interval); // Clean up interval on unmount
+  }, [noFaceTime]);
 
   useEffect(() => {
     setStartTime(new Date()); // Set the session's start time as the current time
@@ -109,7 +108,7 @@ const FocusSession = ({ setSessionActive }) => {
           <div className="session-stats">
             <h2>Session Stats</h2>
             <p>Total Session Time: {formatTime(sessionStats.totalSessionTime)}</p>
-            <p>Time Focused: {formatTime(sessionStats.totalSessionTime - sessionStats.totalTimeUnfocused)}</p>
+            <p>Time Focused: {formatTime(sessionStats.totalTimeFocused)}</p>
             <p>Total Alerts Triggered: {sessionStats.numberOfAlerts}</p>
 
             <p className="session-analysis-text">You were focused for a total of {`${sessionStats.focusPercent.toFixed(2)}%`} of your session</p>
