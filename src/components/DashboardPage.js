@@ -5,6 +5,7 @@ import './DashboardPage.css';
 const DashboardPage = () => {
   const [chartType, setChartType] = useState('line'); // State to manage the active chart type
   const [sessions, setSessions] = useState([]); // State to hold session data
+  const [confirmClearHistory, setConfirmClearHistory] = useState(false);
   const [summaryData, setSummaryData] = useState({
     totalSessionTime: 0,
     totalFocusTime: 0,
@@ -40,10 +41,35 @@ const DashboardPage = () => {
     fetchSessions();
   }, []);
 
+  // Function to clear session history
+  const clearHistory = async () => {
+    try {
+      const response = await fetch('/api/sessions', {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        setSessions([]); // Clear the session state if successful
+        setConfirmClearHistory(false);
+      } else {
+        console.error('Failed to clear session history');
+      }
+    } catch (error) {
+      console.error('Error clearing session history:', error);
+    }
+  };
+
   const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    return `${mins} min ${secs} sec`;
+
+    if (hrs > 0) {
+      return `${hrs} hr ${mins} min ${secs} sec`;
+    } else if (mins > 0) {
+      return `${mins} min ${secs} sec`;
+    } else {
+      return secs === 1 ? `${secs} second` : `${secs} seconds`;
+    }
   };
 
   return (
@@ -113,10 +139,28 @@ const DashboardPage = () => {
               ))}
             </tbody>
           </table>
+
         ) : (
-          <p className='no-session-text'>No session recorded</p> // Show this message if no sessions are available
+          <p className='no-session-text'><b>No session recorded</b></p> // Show this message if no sessions are available
         )}
       </section>
+
+      <div className="clear-history-btn-container">
+        <button className="clear-history-btn" onClick={() => setConfirmClearHistory(true)}>
+          Clear History
+        </button>
+      </div>
+
+
+      {confirmClearHistory && (
+        <div className="confirm-clear-history-container">
+          <div className="confirm-clear-history">
+            <h3>Are you sure you want to clear your session history?</h3>
+            <button onClick={() => setConfirmClearHistory(false)}>Cancel</button>
+            <button onClick={clearHistory}>Yes, Clear History</button>
+          </div>
+        </div>
+      )}
     </div >
   );
 };

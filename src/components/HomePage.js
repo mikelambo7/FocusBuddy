@@ -26,9 +26,17 @@ const HomePage = () => {
   }, []);
 
   const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    return `${mins} min ${secs} sec`;
+
+    if (hrs > 0) {
+      return `${hrs} hr ${mins} min ${secs} sec`;
+    } else if (mins > 0) {
+      return `${mins} min ${secs} sec`;
+    } else {
+      return secs === 1 ? `${secs} second` : `${secs} seconds`;
+    }
   };
 
   const handleButtonClick = () => {

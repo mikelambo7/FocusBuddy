@@ -5,42 +5,46 @@ import './HomePage.css';
 
 const FocusSession = ({ setSessionActive }) => {
   const [startTime, setStartTime] = useState(null); // Initialize startTime state to store timme a session starts
-  const [noFaceTime, setNoFaceTime] = useState(0); // Time without face detection
   const [alertsTriggered, setAlertsTriggered] = useState(0); // Counter for each time user loses focus
   const [totalUnfocusedTime, setTotalUnfocusedTime] = useState(0); // Cumulative unfocused time in seconds/minutes/hours
   const [sessionStats, setSessionStats] = useState(null);
   const [showNotification, setShowNotification] = useState(false); // Notification displayed for when a session is saved successfully
+  const [showConfirmation, setShowConfirmation] = useState(false); // Confirmation modal state
+  const noFaceTimeRef = useRef(0); // Ref to track noFaceTime
+  const faceDetectedRef = useRef(true); // Tracks face detection status using a ref
+
   const alertSoundRef = useRef(new Audio(pingSound));
-  const noFaceDetectedRef = useRef(false); // Flag to track face detection
 
   /* To process whether a face has been detected by the webcam */
   const handleFaceDetected = useCallback((isDetected) => { // useCallback ensures function is memoized and not recreated on every render
-    noFaceDetectedRef.current = !isDetected; // Store whether the face is detected
+    faceDetectedRef.current = isDetected; // Update the face detected flag
   }, []);
 
   useEffect(() => {
+    // Preload alert sound
     const alertSound = alertSoundRef.current;
-    alertSound.load(); // Preload sound
+    alertSound.load();
 
     // Check every second to see if face is detected
     const interval = setInterval(() => {
-      if (noFaceDetectedRef.current) {
-        setNoFaceTime((prevTime) => prevTime + 1); // Increment noFaceTime by 1 second
+      if (!faceDetectedRef.current) {
+        // Increment the noFaceTime when no face is detected
+        noFaceTimeRef.current += 1;
         setTotalUnfocusedTime((prevTime) => prevTime + 1); // Increment unfocused time by 1 second
 
-        // If no face is detected for 3 seconds, trigger alert
-        if (noFaceTime === 3) {
+        // If no face is detected for 5 seconds, trigger alert
+        if (noFaceTimeRef.current === 10) {
           alertSound.play();
           setAlertsTriggered((prevCount) => prevCount + 1); // Increment focus lost count
-          setNoFaceTime(0); // Reset noFaceTime after logging the loss of focus
+          noFaceTimeRef.current = 0;
         }
       } else {
-        setNoFaceTime(0); // Reset noFaceTime if face is detected
+        noFaceTimeRef.current = 0;
       }
     }, 1000); // Check every second
 
     return () => clearInterval(interval); // Clean up interval on unmount
-  }, [noFaceTime]);
+  }, []);
 
   useEffect(() => {
     setStartTime(new Date()); // Set the session's start time as the current time
@@ -85,14 +89,35 @@ const FocusSession = ({ setSessionActive }) => {
       }
     } catch (error) {
       console.error('Failed to save session data:', error);
+    } finally {
+      setShowConfirmation(false);
     }
+  };
+
+  // Function to confirm a completed session
+  const confirmSession = () => {
+    setShowConfirmation(true); // Show the confirmation modal
+  };
+
+  // Function to handle discarding the session
+  const handleDiscardSession = () => {
+    setShowConfirmation(false); // Close the confirmation modal
+    setSessionActive(false); // End the session without saving
   };
 
   // Formats the times as minutes and seconds
   const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    return `${mins} min ${secs} sec`;
+
+    if (hrs > 0) {
+      return `${hrs} hr ${mins} min ${secs} sec`;
+    } else if (mins > 0) {
+      return `${mins} min ${secs} sec`;
+    } else {
+      return secs === 1 ? `${secs} second` : `${secs} seconds`;
+    }
   };
 
   return (
@@ -100,6 +125,16 @@ const FocusSession = ({ setSessionActive }) => {
       {showNotification && (
         <div className="notification-bar">
           Session saved successfully!
+        </div>
+      )}
+
+      {showConfirmation && (
+        <div className="session-confirmation-container">
+          <div className="session-confirmation">
+            <p>Would you like to save this session?</p>
+            <button onClick={handleDiscardSession}>No</button>
+            <button onClick={endSession}>Yes</button>
+          </div>
         </div>
       )}
 
@@ -122,16 +157,15 @@ const FocusSession = ({ setSessionActive }) => {
         </div>
       )}
 
-      {!sessionStats && (
-        <>
-          <button className="session end" onClick={endSession}>
-            <img src="/circle-stop.svg" alt="Icon" />
-            <span>End session</span>
-          </button>
-          <div className="webcam-feed">
-            <WebcamFeed onFaceDetected={handleFaceDetected} />
-          </div>
-        </>
+      <button className="session end" onClick={confirmSession}>
+        <img src="/circle-stop.svg" alt="Icon" />
+        <span>End session</span>
+      </button>
+
+      {!sessionStats && !showConfirmation && (
+        <div className="webcam-feed">
+          <WebcamFeed onFaceDetected={handleFaceDetected} />
+        </div>
       )}
     </div>
   );

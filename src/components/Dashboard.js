@@ -7,23 +7,6 @@ Chart.register(...registerables);
 const Dashboard = ({ chartType }) => {
   const [data, setData] = useState([]);
 
-  // useEffect(() => {
-  //   // Hardcoded data for testing purposes
-  //   const testData = [
-  //     { startTime: '2024-09-24T10:00:00Z', focusPercent: 43 },
-  //     { startTime: '2024-09-24T10:30:00Z', focusPercent: 67 },
-  //     { startTime: '2024-09-24T11:00:00Z', focusPercent: 51 },
-  //     { startTime: '2024-09-24T11:30:00Z', focusPercent: 48 },
-  //     { startTime: '2024-09-24T12:00:00Z', focusPercent: 78 },
-  //     { startTime: '2024-09-24T12:30:00Z', focusPercent: 85 },
-  //     { startTime: '2024-09-24T13:00:00Z', focusPercent: 56 },
-  //     { startTime: '2024-09-24T13:30:00Z', focusPercent: 64 },
-  //     { startTime: '2024-09-24T14:00:00Z', focusPercent: 90 }, 
-  //     { startTime: '2024-09-24T14:30:00Z', focusPercent: 72 },
-  //   ];
-  //   setData(testData);
-  // }, []); // Only run once on component mount
-
   // Generate data for 10 most recent sessions
   useEffect(() => {
     const fetchSessions = async () => {
@@ -57,6 +40,22 @@ const Dashboard = ({ chartType }) => {
     //  Fetches the 2D rendering context required by Chart.js to draw on the canvas
     const ctx = document.getElementById('attentionChart').getContext('2d');
 
+    const backgroundColor = chartType === 'pie'
+      ? [
+          '#4BC0C0',
+          '#3357FF',
+          '#FF5733',
+          '#9D33FF',
+          '#FFBD33',
+          '#33FFF6',
+          '#FF6384',
+          '#33FF57',
+          '#1C104C',
+          '#FF33A1',
+        ]
+      : '#0cae73'; 
+    const borderColor = chartType === 'pie' ? '#B5C2E4' : '#0cae73'; 
+
     const chartInstance = new Chart(ctx, {
       type: chartType,
       data: {
@@ -64,9 +63,12 @@ const Dashboard = ({ chartType }) => {
         labels: data.map((session) => new Date(session.startTime).toLocaleTimeString()),
         // Defines the data series displayed in the chart.
         datasets: [{
-          label: 'Attention Over Time',
+          label: 'Average Focus Percentage',
           data: data.map((session) => session.focusPercent), // Calculates average focus time for each session
           fill: false,
+          backgroundColor: backgroundColor,
+          borderColor: borderColor,
+          pointBackgroundColor: '#1C104C',
         }],
       },
       options: {
@@ -74,6 +76,21 @@ const Dashboard = ({ chartType }) => {
         plugins: { // Ensures that the legend (which shows the dataset label) is visible.
           legend: {
             display: true,
+            labels: {
+              color: '#333',
+              font: {
+                size: 12,
+                weight: 'bold',
+              },
+            },
+          },
+          tooltip: {
+            enabled: true,
+            backgroundColor: '#1C104C',
+            titleColor: '#fff',
+            bodyColor: '#fff',
+            borderColor: '#4bc0c0',
+            borderWidth: 1,
           },
         },
         scales: {
@@ -81,12 +98,34 @@ const Dashboard = ({ chartType }) => {
             title: {
               display: true,
               text: 'Time',
+              color: '#1C104C',
+              font: {
+                size: 12,
+                weight: 'bold',
+              },
+            },
+            ticks: {
+              color: '#333', // X-axis tick color
+            },
+            grid: {
+              display: false, // Hide vertical gridlines for a cleaner look
             },
           },
           y: { // Configures the Y-axis
             title: {
               display: true,
               text: 'Average Focus Percentage (%)',
+              color: '#1C104C',
+              font: {
+                size: 12,
+                weight: 'bold',
+              },
+            },
+            ticks: {
+              color: '#333',
+            },
+            grid: {
+              color: 'rgba(75, 192, 192, 0.1)', // Subtle gridlines for visual aid
             },
             beginAtZero: true,
           },

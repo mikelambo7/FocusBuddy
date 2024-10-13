@@ -98,3 +98,14 @@ app.get('/api/sessions/latest', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
+// Route to delete all session history
+app.delete('/api/sessions', async (req, res) => {
+  try {
+    await Session.deleteMany(); // Deletes all session documents from the collection
+    res.status(200).send('Session history cleared');
+  } catch (error) {
+    console.error('Failed to clear session history:', error);
+    res.status(500).send('Failed to clear session history');
+  }
+});

@@ -6,9 +6,16 @@ const WebcamFeed = ({ onFaceDetected }) => {
   const workerRef = useRef(null);
 
   useEffect(() => {
+    let isMounted = true; // Track if component is still mounted
+
     // Access webcam
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => {
+        if (!isMounted) {
+          // Component unmounted before stream was set
+          stream.getTracks().forEach(track => track.stop());
+          return;
+        }
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
       })
@@ -46,12 +53,14 @@ const WebcamFeed = ({ onFaceDetected }) => {
     const interval = setInterval(captureFrame, 500);
 
     return () => {
+      isMounted = false;
       // Clear face detection interval
       clearInterval(interval);
       // Stop all tracks of the media stream to properly turn off the webcam
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
-      }
+      } 
+
       if (workerRef.current) {
         workerRef.current.terminate();
       }
