@@ -7,6 +7,20 @@ const HomePage = () => {
   const [sessionActive, setSessionActive] = useState(false);
   const [recentStats, setRecentStats] = useState(null);
 
+   // Array of daily focus tips
+   const focusTips = [
+    "Minimize distractions by silencing notifications during study sessions.",
+    "Take regular short breaks to maintain focus for longer periods.",
+    "Stay hydrated during your study sessions to improve concentration.",
+    "Create a dedicated workspace that's free from distractions.",
+    "Use the Pomodoro technique: 25 minutes of focused work, followed by a 5-minute break.",
+    "Set specific goals for each session to keep yourself motivated.",
+    "Use background music or white noise to block out distractions.",
+    "Get enough sleep to help your brain stay sharp during study time.",
+    "Avoid multitasking, as it can reduce your focus and productivity.",
+    "Reward yourself after a productive study session to stay motivated."
+  ];
+
   useEffect(() => {
     const fetchRecentSession = async () => {
       try {
@@ -48,6 +62,12 @@ const HomePage = () => {
     }
   };
 
+  const getDailyFocusTip = () => {
+    const dayOfMonth = new Date().getDate();
+    const tipIndex = dayOfMonth % focusTips.length;
+    return focusTips[tipIndex];
+  };
+
   return (
     <div className="home-container">
       <main>
@@ -62,14 +82,15 @@ const HomePage = () => {
           {sessionActive && <FocusSession setSessionActive={setSessionActive} />}
 
           <div className="recent-stats">
-            <p className="content-header">Recent Focus Stats:</p>
+            <p className="content-header"><b>Recent Focus Stats:</b></p>
             {recentStats ? (
               <>
-                <p>Total Session Time: {formatTime(recentStats.totalSessionTime)}</p>
-                <p>Total Focused Time: {formatTime(recentStats.totalTimeFocused)}</p>
-                <p>Number of Alerts: {recentStats.numberOfAlerts}</p>
+                <p><b>Total Session Time:</b> {formatTime(recentStats.totalSessionTime)}</p>
+                <p><b>Total Focused Time:</b> {formatTime(recentStats.totalTimeFocused)}</p>
+                <p><b>Number of Alerts:</b> {recentStats.numberOfAlerts}</p>
+                <p><b>Focus Percent:</b> {`${recentStats.focusPercent.toFixed(2)}%`}</p>
                 {recentStats.totalSessionTime !== 0 && recentStats.numberOfAlerts !== 0 && (
-                  <p>Focus Lost Every: {formatTime(Math.floor(recentStats.totalSessionTime / recentStats.numberOfAlerts))}</p>
+                  <p><b>Focus Lost Every:</b> {formatTime(Math.floor(recentStats.totalSessionTime / recentStats.numberOfAlerts))}</p>
                 )}
               </>
             ) : (
@@ -77,10 +98,10 @@ const HomePage = () => {
             )}
           </div>
         </div>
-
+        
         <div className="focus-tip">
           <p className="focus-tip-heading">daily focus tip!</p>
-          <p>Minimize distractions by silencing notifications during study sessions</p>
+          <p>{getDailyFocusTip()}</p>
         </div>
       </main>
     </div>

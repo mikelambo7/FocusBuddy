@@ -75,7 +75,7 @@ const DashboardPage = () => {
   return (
     <div className="dashboard-container">
       <section className="summary-section">
-        <h1>Summary</h1>
+        <h1>Account Summary</h1>
         <div className="section-content">
           <p><b>Overall Session Time:</b> {formatTime(summaryData.totalSessionTime)}</p>
           <p><b>Overall Focus Time:</b> {formatTime(summaryData.totalFocusTime)}</p>
@@ -123,7 +123,7 @@ const DashboardPage = () => {
             <thead>
               <tr>
                 <th><b>Session started</b></th>
-                <th><b>Session End</b></th>
+                <th><b>Session Duration</b></th>
                 <th><b>Focus Duration</b></th>
                 <th><b>Alerts Triggered</b></th>
               </tr>
@@ -131,8 +131,8 @@ const DashboardPage = () => {
             <tbody>
               {recentSessions.map((session, index) => (
                 <tr key={index}>
-                  <td>{new Date(session.startTime).toLocaleTimeString()}</td>
-                  <td>{new Date(session.endTime).toLocaleTimeString()}</td>
+                  <td>{new Date(session.startTime).toLocaleString()}</td>
+                  <td>{formatTime(session.totalSessionTime)}</td>
                   <td>{formatTime(session.totalTimeFocused)}</td>
                   <td>{session.numberOfAlerts}</td>
                 </tr>

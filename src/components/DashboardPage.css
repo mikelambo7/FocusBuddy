@@ -26,7 +26,7 @@ section h1 {
   padding: 0 0 0.5rem;
   background-color: #B5C2E4;
   border: 2px solid #1C104C;
-  border-radius: 25px;
+  border-radius: 14px;
   overflow: hidden;
 }
 
@@ -89,6 +89,7 @@ table th {
   color: #1c104cd4;
   font-weight: 400;
   font-size: 20px;
+  text-transform: capitalize;
 }
 
 table th,

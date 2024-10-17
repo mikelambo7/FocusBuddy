@@ -7,6 +7,7 @@ const FocusSession = ({ setSessionActive }) => {
   const [startTime, setStartTime] = useState(null); // Initialize startTime state to store timme a session starts
   const [alertsTriggered, setAlertsTriggered] = useState(0); // Counter for each time user loses focus
   const [totalUnfocusedTime, setTotalUnfocusedTime] = useState(0); // Cumulative unfocused time in seconds/minutes/hours
+  const [previousSessionFocus, setPreviousSessionFocus] = useState(null); // Store previous session focus
   const [sessionStats, setSessionStats] = useState(null);
   const [showNotification, setShowNotification] = useState(false); // Notification displayed for when a session is saved successfully
   const [showConfirmation, setShowConfirmation] = useState(false); // Confirmation modal state
@@ -19,6 +20,59 @@ const FocusSession = ({ setSessionActive }) => {
   const handleFaceDetected = useCallback((isDetected) => { // useCallback ensures function is memoized and not recreated on every render
     faceDetectedRef.current = isDetected; // Update the face detected flag
   }, []);
+
+  // Request permission from the user to allow browser notifications
+  useEffect(() => {
+    try {
+      if (!('Notification' in window)) {
+        console.error('This browser does not support desktop notifications.');
+      } else {
+        if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+          Notification.requestPermission().then((permission) => {
+            console.log('Notification permission request result:', permission);
+            if (permission === 'granted') {
+              console.log('Notification permission granted.');
+            } else {
+              console.log('Notification permission denied.');
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error in notification permission useEffect:', error);
+    }
+  }, []);
+
+  const triggerBrowserNotification = () => {
+    try {
+      if (!('Notification' in window)) {
+        console.error('This browser does not support desktop notifications.');
+        return;
+      }
+    
+      if (Notification.permission === 'granted') {
+        new Notification('Focus Alert', {
+          body: "You've lost focus for too long. You need to pay attention!",
+        });
+        console.log('Notification sent.');
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then((permission) => {
+          if (permission === 'granted') {
+            new Notification('Focus Alert', {
+              body: "You've lost focus for too long. You need to pay attention!",
+            });
+          } else {
+            console.log('Notification permission denied.');
+          }
+        });
+      } else {
+        // Permission was denied
+        console.log('Notifications are blocked by the user.');
+      }
+    } catch (error) {
+      console.error('Error in triggerBrowserNotification:', error);
+    }
+  };
 
   useEffect(() => {
     // Preload alert sound
@@ -33,10 +87,12 @@ const FocusSession = ({ setSessionActive }) => {
         setTotalUnfocusedTime((prevTime) => prevTime + 1); // Increment unfocused time by 1 second
 
         // If no face is detected for 5 seconds, trigger alert
-        if (noFaceTimeRef.current === 10) {
+        if (noFaceTimeRef.current === 5) {
           alertSound.play();
           setAlertsTriggered((prevCount) => prevCount + 1); // Increment focus lost count
           noFaceTimeRef.current = 0;
+
+          triggerBrowserNotification(); // Trigger browser alert notification
         }
       } else {
         noFaceTimeRef.current = 0;
@@ -48,6 +104,22 @@ const FocusSession = ({ setSessionActive }) => {
 
   useEffect(() => {
     setStartTime(new Date()); // Set the session's start time as the current time
+  }, []);
+
+  const fetchPreviousSession = async () => {
+    try {
+      const response = await fetch('/api/sessions/latest'); // Fetch the previous session
+      if (response.ok) {
+        const data = await response.json();
+        setPreviousSessionFocus(data.focusPercent); // Store the focus percentage from the previous session
+      }
+    } catch (error) {
+      console.error('Failed to fetch previous session data', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPreviousSession(); // Fetch previous session when component mounts
   }, []);
 
   const endSession = async () => {
@@ -120,6 +192,31 @@ const FocusSession = ({ setSessionActive }) => {
     }
   };
 
+  const focusComparison = () => {
+    if (previousSessionFocus !== null && sessionStats) {
+      const focusDifference = sessionStats.focusPercent - previousSessionFocus;
+
+      if (focusDifference > 0) {
+        return (
+          <p className="session-analysis-text-1">
+            <span><b>↑ </b></span> <b>You increased your focus level by {focusDifference.toFixed(2)}% from your last session.</b>
+          </p>
+        );
+      } else if (focusDifference < 0) {
+        return (
+          <p className="session-analysis-text-2">
+            <span><b>↓ </b></span><b>Your focus decreased by {Math.abs(focusDifference).toFixed(2)}% from your last session.</b>
+          </p>
+        );
+      } else {
+        return (
+          <p><span><b>— </b></span><b>Your focus level remained the same as your last session.</b></p>
+        );
+      }
+    }
+    return null;
+  };
+
   return (
     <div className="focus-session-container">
       {showNotification && (
@@ -145,8 +242,10 @@ const FocusSession = ({ setSessionActive }) => {
             <p>Total Session Time: {formatTime(sessionStats.totalSessionTime)}</p>
             <p>Time Focused: {formatTime(sessionStats.totalTimeFocused)}</p>
             <p>Total Alerts Triggered: {sessionStats.numberOfAlerts}</p>
+            <p>Focus Percent: {`${sessionStats.focusPercent.toFixed(2)}%`} </p>
 
-            <p className="session-analysis-text">You were focused for a total of {`${sessionStats.focusPercent.toFixed(2)}%`} of your session</p>
+            {focusComparison()}
+            
             <button onClick={() => {
               setSessionStats(null);
               setSessionActive(false);

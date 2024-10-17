@@ -42,16 +42,16 @@ const Dashboard = ({ chartType }) => {
 
     const backgroundColor = chartType === 'pie'
       ? [
-          '#4BC0C0',
-          '#3357FF',
-          '#FF5733',
-          '#9D33FF',
-          '#FFBD33',
-          '#33FFF6',
-          '#FF6384',
-          '#33FF57',
-          '#1C104C',
-          '#FF33A1',
+          '#4BC0C0', // cyan
+          '#3357FF', // blue
+          '#FF5733', // red-orange
+          '#9D33FF', // purple
+          '#FFBD33', // yellow-orange
+          '#dfdee6', // light blue
+          '#FF6384', // pink-red
+          '#056316', // green
+          '#1C104C', // dark purple
+          '#5c0606', // red
         ]
       : '#0cae73'; 
     const borderColor = chartType === 'pie' ? '#B5C2E4' : '#0cae73'; 
