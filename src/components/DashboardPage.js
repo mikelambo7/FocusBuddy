@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { auth } from '../firebase/firebase.js';
+import { signOut } from 'firebase/auth';
 import Dashboard from './Dashboard';
 import './DashboardPage.css';
 
@@ -15,11 +18,25 @@ const DashboardPage = () => {
   });
   const recentSessions = sessions.slice(-10).reverse(); // Get the last 10 sessions, if there are fewer, show all
 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSessions = async () => {
+      const user = auth.currentUser;
+      if (!user) {
+        // Handle unauthenticated state
+        return;
+      }
+
+      const idToken = await user.getIdToken();
+
       try {
-        const response = await fetch('/api/sessions');
+        const response = await fetch('/api/sessions', {
+          headers: {
+            'Authorization': idToken,
+          },
+        });
+
         if (response.ok) {
           const data = await response.json();
           setSessions(data.sessions); // Set the fetched session data
@@ -72,8 +89,37 @@ const DashboardPage = () => {
     }
   };
 
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        navigate('/');
+      })
+      .catch((error) => {
+        console.error('Logout error:', error);
+      });
+  };
+
   return (
     <div className="dashboard-container">
+      <header>
+        <h1 className="title">
+          <img src="/fb_logo_hd.png" alt="Focus Buddy Logo" className="logo" />
+          Focus Buddy!
+        </h1>
+      </header>
+
+      <nav>
+        <NavLink to="/home" className={({ isActive }) => `tab ${isActive ? 'active' : ''}`}>
+          Home
+        </NavLink>
+        <NavLink to="/dashboard" className={({ isActive }) => `tab ${isActive ? 'active' : ''}`}>
+          Dashboard
+        </NavLink>
+        <button onClick={handleLogout} className="tab logout-button">
+          Logout
+        </button>
+      </nav>
+
       <section className="summary-section">
         <h1>Account Summary</h1>
         <div className="section-content">

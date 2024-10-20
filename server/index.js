@@ -12,6 +12,30 @@ const app = express();
 // To parse incoming JSON requests.
 app.use(express.json());
 
+const admin = require('firebase-admin');
+const serviceAccount = require('./path/to/serviceAccountKey.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+const authenticateToken = async (req, res, next) => {
+  const idToken = req.headers.authorization;
+
+  if (!idToken) {
+    return res.status(401).send('Unauthorized');
+  }
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    req.user = decodedToken;
+    next();
+  } catch (error) {
+    console.error('Error verifying ID token:', error);
+    res.status(401).send('Unauthorized');
+  }
+};
+
 // Connect to a MongoDB database using Mongoose.
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -24,6 +48,7 @@ mongoose.connect(process.env.MONGO_URI, {
 
 // Define a Mongoose schema for the session data.
 const sessionSchema = new mongoose.Schema({
+  userId: String,
   startTime: Date,
   endTime: Date,
   totalSessionTime: Number,
@@ -38,8 +63,10 @@ const Session = mongoose.model('Session', sessionSchema);
 
 // Define a POST endpoint at '/api/sessions'.
 // This endpoint allows clients to send session data to the server.
-app.post('/api/sessions', async (req, res) => {
-  const session = new Session(req.body);
+app.post('/api/sessions', authenticateToken, async (req, res) => {
+  const userId = req.user.uid; // Get user ID from token
+  const sessionData = { ...req.body, userId };
+  const session = new Session(sessionData);
   await session.save();
   res.status(201).send(session);
 });
@@ -51,8 +78,9 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 // Route to get all session data
 app.get('/api/sessions', async (req, res) => {
   try {
+    const userId = req.user.uid;
     // Fetch all session documents from the database
-    const sessions = await Session.find();
+    const sessions = await Session.find({ userId });
     
     let totalSessionTime = 0;
     let totalFocusTime = 0;

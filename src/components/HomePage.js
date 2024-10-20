@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { auth } from '../firebase/firebase.js';
+import { useAuth } from '../firebase/AuthContext.js';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
 import FocusSession from './FocusSession';
 import recordingStartedAudio from './assets/recording_started.wav';
 import './HomePage.css';
 
 const HomePage = () => {
+  const { currentUser } = useAuth();
   const [sessionActive, setSessionActive] = useState(false);
   const [recentStats, setRecentStats] = useState(null);
 
-   // Array of daily focus tips
-   const focusTips = [
+  // Array of daily focus tips
+  const focusTips = [
     "Minimize distractions by silencing notifications during study sessions.",
     "Take regular short breaks to maintain focus for longer periods.",
     "Stay hydrated during your study sessions to improve concentration.",
@@ -68,9 +73,40 @@ const HomePage = () => {
     return focusTips[tipIndex];
   };
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        navigate('/');
+      })
+      .catch((error) => {
+        console.error('Logout error:', error);
+      });
+  };
+
   return (
     <div className="home-container">
+      <header>
+        <h1 className="title">
+          <img src="/fb_logo_hd.png" alt="Focus Buddy Logo" className="logo" />
+          Focus Buddy!
+        </h1>
+      </header>
+
+      <nav>
+        <NavLink to="/home" className={({ isActive }) => `tab ${isActive ? 'active' : ''}`}>
+          Home
+        </NavLink>
+        <NavLink to="/dashboard" className={({ isActive }) => `tab ${isActive ? 'active' : ''}`}>
+          Dashboard
+        </NavLink>
+        <button onClick={handleLogout} className="tab logout-button">
+          Logout
+        </button>
+      </nav>
       <main>
+        <h1>Welcome, {currentUser.email}</h1>
         <div className="home-content">
           {!sessionActive && (
             <button className="session start" onClick={handleButtonClick}>
@@ -98,7 +134,7 @@ const HomePage = () => {
             )}
           </div>
         </div>
-        
+
         <div className="focus-tip">
           <p className="focus-tip-heading">daily focus tip!</p>
           <p>{getDailyFocusTip()}</p>

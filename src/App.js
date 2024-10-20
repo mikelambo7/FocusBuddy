@@ -1,51 +1,49 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import DashboardPage from './components/DashboardPage';
+import LandingPage from './components/LandingPage';
+import SignUp from './firebase/SignUp.js';
+import Login from './firebase/Login.js';
+import ProtectedRoute from './firebase/ProtectedRoute.js';
+import { AuthProvider } from './firebase/AuthContext';
 import './App.css';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('home');
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'home':
-        return <HomePage />;
-      case 'dashboard':
-        return <DashboardPage />;
-      default:
-        return <HomePage />;
-    }
-  };
-
   return (
-    <div className="app-container">
-      <header>
-        <h1 className="title">Focus Buddy !</h1>
-      </header>
+    <AuthProvider>
+      <Router>
+          <main>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
 
-      <nav>
-        <button
-          className={`tab ${activeTab === 'home' ? 'active' : ''}`}
-          onClick={() => setActiveTab('home')}
-        >
-          Home
-        </button>
-        <button
-          className={`tab ${activeTab === 'dashboard' ? 'active' : ''}`}
-          onClick={() => setActiveTab('dashboard')}
-        >
-          Dashboard
-        </button>
-      </nav>
+              <Route
+                path="/home"
+                element={
+                  <ProtectedRoute>
+                    <HomePage />
+                  </ProtectedRoute>
+                }
+              />
 
-      <main>
-        {renderContent()}
-      </main>
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <DashboardPage />
+                  </ProtectedRoute>
+                }
+              />
 
-      <footer className="footer">
-        <p>Designed & <span role="img" aria-label="Coded">👨‍💻</span> by Michael Lambo</p>
-      </footer>
-    </div>
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/login" element={<Login />} />
+
+              {/* Fallback route */}
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </main>
+      </Router>
+    </AuthProvider>
   );
 }
 

@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import WebcamFeed from './WebcamFeed';
+import ping from './assets/ping.wav';
 import pingSound from './assets/ping_alert.wav';
+import { auth } from '../firebase/firebase.js';
 import './HomePage.css';
 
 const FocusSession = ({ setSessionActive }) => {
@@ -14,7 +16,8 @@ const FocusSession = ({ setSessionActive }) => {
   const noFaceTimeRef = useRef(0); // Ref to track noFaceTime
   const faceDetectedRef = useRef(true); // Tracks face detection status using a ref
 
-  const alertSoundRef = useRef(new Audio(pingSound));
+  const alertSoundRef = useRef(new Audio(ping));
+  const alertSoundRef2 = useRef(new Audio(pingSound));
 
   /* To process whether a face has been detected by the webcam */
   const handleFaceDetected = useCallback((isDetected) => { // useCallback ensures function is memoized and not recreated on every render
@@ -43,7 +46,40 @@ const FocusSession = ({ setSessionActive }) => {
     }
   }, []);
 
-  const triggerBrowserNotification = () => {
+  const triggerBrowserNotification1 = () => {
+    try {
+      if (!('Notification' in window)) {
+        console.error('This browser does not support desktop notifications.');
+        return;
+      }
+    
+      if (Notification.permission === 'granted') {
+        new Notification('Focus Alert', {
+          body: "You're losing focus, pay attention!",
+          icon: '/fb_logo_hd.png',
+        });
+        console.log('Notification sent.');
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then((permission) => {
+          if (permission === 'granted') {
+            new Notification('Focus Alert', {
+              body: "You're losing focus, pay attention!",
+              icon: '/fb_logo_hd.png',
+            });
+          } else {
+            console.log('Notification permission denied.');
+          }
+        });
+      } else {
+        // Permission was denied
+        console.log('Notifications are blocked by the user.');
+      }
+    } catch (error) {
+      console.error('Error in triggerBrowserNotification:', error);
+    }
+  };
+
+  const triggerBrowserNotification2 = () => {
     try {
       if (!('Notification' in window)) {
         console.error('This browser does not support desktop notifications.');
@@ -53,6 +89,7 @@ const FocusSession = ({ setSessionActive }) => {
       if (Notification.permission === 'granted') {
         new Notification('Focus Alert', {
           body: "You've lost focus for too long. You need to pay attention!",
+          icon: '/fb_logo_hd.png',
         });
         console.log('Notification sent.');
       } else if (Notification.permission !== 'denied') {
@@ -60,6 +97,7 @@ const FocusSession = ({ setSessionActive }) => {
           if (permission === 'granted') {
             new Notification('Focus Alert', {
               body: "You've lost focus for too long. You need to pay attention!",
+              icon: '/fb_logo_hd.png',
             });
           } else {
             console.log('Notification permission denied.');
@@ -77,7 +115,9 @@ const FocusSession = ({ setSessionActive }) => {
   useEffect(() => {
     // Preload alert sound
     const alertSound = alertSoundRef.current;
+    const alertSound2 = alertSoundRef2.current;
     alertSound.load();
+    alertSound2.load();
 
     // Check every second to see if face is detected
     const interval = setInterval(() => {
@@ -87,13 +127,19 @@ const FocusSession = ({ setSessionActive }) => {
         setTotalUnfocusedTime((prevTime) => prevTime + 1); // Increment unfocused time by 1 second
 
         // If no face is detected for 5 seconds, trigger alert
-        if (noFaceTimeRef.current === 5) {
+        if (noFaceTimeRef.current === 10) {
+          // Play the first alert
           alertSound.play();
           setAlertsTriggered((prevCount) => prevCount + 1); // Increment focus lost count
+          triggerBrowserNotification1(); // Trigger browser alert notification
+        } else if (noFaceTimeRef.current === 20) {
+          // Play the second alert
+          alertSound2.play();
+          setAlertsTriggered((prevCount) => prevCount + 1);
+          triggerBrowserNotification2();
           noFaceTimeRef.current = 0;
-
-          triggerBrowserNotification(); // Trigger browser alert notification
         }
+  
       } else {
         noFaceTimeRef.current = 0;
       }
@@ -123,6 +169,14 @@ const FocusSession = ({ setSessionActive }) => {
   }, []);
 
   const endSession = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      // User is not authenticated
+      return;
+    }
+  
+    const idToken = await user.getIdToken();
+
     const endTime = new Date();
 
     const sessionData = {
@@ -141,6 +195,7 @@ const FocusSession = ({ setSessionActive }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': idToken,
         },
         body: JSON.stringify(sessionData),
       });

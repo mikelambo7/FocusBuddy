@@ -1,0 +1,84 @@
+.landing-page {
+    background-image: url('/Users/michaellambo/focus-buddy/public/focusing.png');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    color: #ffffff;
+  }
+  
+  .overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .landing-header {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .landing-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .landing-logo {
+    width: 50px;
+    height: auto;
+    margin-right: 10px;
+  }
+  
+  .landing-content {
+    text-align: center;
+    padding: 0 20px;
+  }
+  
+  .landing-content h2 {
+    font-size: 3em;
+    margin-bottom: 20px;
+  }
+  
+  .landing-content p {
+    font-size: 1.2em;
+    margin-bottom: 40px;
+  }
+  
+  .landing-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .landing-button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  
+  .signup-button {
+    background-color: #28a745; /* Green */
+  }
+  
+  .signup-button:hover {
+    background-color: #218838;
+  }
+  
+  .login-button {
+    background-color: #007bff; /* Blue */
+  }
+  
+  .login-button:hover {
+    background-color: #0069d9;
+  }
+  
+  .landing-footer {
+    text-align: center;
+    padding: 20px;
+  }
+  
