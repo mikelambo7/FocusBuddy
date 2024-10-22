@@ -1,9 +1,21 @@
-.login-page {
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.login-page {
+    position: relative;
     min-height: 100vh;
-    background-color: #f0f2f5;
+    background-image: url('/focusing.png');
+    background-size: cover;
+    background-position: center;
     font-family: 'Roboto', sans-serif;
 }
 
@@ -28,6 +40,62 @@
     text-align: center;
     margin-bottom: 20px;
 }
+
+.password-input-container {
+    position: relative;
+}
+
+.password-input-container input {
+    width: 100%;
+    padding-right: 40px;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #555;
+    font-size: 18px;
+}
+
+.password-error {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.password-requirements {
+    font-size: 13px;
+    color: #555;
+    margin-top: 20px;
+    padding-left: 5px;
+    list-style-type: none;
+  }
+  
+  .password-requirements li {
+    margin-bottom: 5px;
+    position: relative;
+    padding-left: 15px;
+  }
+  
+  .password-requirements li::before {
+    content: '✗';
+    position: absolute;
+    left: 0;
+    font-size: 13px;
+    color: #e74c3c;
+  }
+  
+  .password-requirements li.valid::before {
+    content: '✓';
+    color: #28a745;
+  }
+  
+  .password-requirements li.valid {
+    color: #28a745;
+  }
 
 .input-group-login {
     margin-bottom: 20px;
@@ -97,11 +165,11 @@
 }
 
 .signup-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: relative;
     min-height: 100vh;
-    background-color: #f0f2f5;
+    background-image: url('/focusing.png');
+    background-size: cover;
+    background-position: center;
     font-family: 'Roboto', sans-serif;
 }
 

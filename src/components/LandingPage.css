@@ -1,5 +1,5 @@
 .landing-page {
-    background-image: url('/Users/michaellambo/focus-buddy/public/focusing.png');
+    background-image: url('/fb_landing.png');
     background-size: cover;
     background-position: center;
     height: 100vh;
@@ -13,22 +13,27 @@
     flex-direction: column;
     justify-content: space-between;
   }
-  
-  .landing-header {
+
+  .title-landing {
+    font-family: "Londrina Solid", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 124px;
+    color: #0C0233;
+    background: #fff;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-stroke: 6px transparent;
+    margin: 0 70px 0;
+    padding-inline: 5px;
     text-align: center;
-    padding: 20px;
   }
-  
-  .landing-title {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .landing-logo {
-    width: 50px;
+
+  .logo-landing {
+    width: 90px;
     height: auto;
-    margin-right: 10px;
+    margin-right: 25px;
+    vertical-align: middle;
   }
   
   .landing-content {
@@ -42,43 +47,53 @@
   }
   
   .landing-content p {
+    font-style: italic;
     font-size: 1.2em;
-    margin-bottom: 40px;
   }
   
   .landing-buttons {
+    margin-top: 40px;
     display: flex;
     justify-content: center;
     gap: 20px;
   }
   
   .landing-button {
-    padding: 15px 30px;
-    font-size: 1.2em;
+    width:8rem;
+    padding: 30px 60px;
+    font-size: 1.4em;
     color: #ffffff;
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: 50px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
     transition: background-color 0.3s;
   }
   
-  .signup-button {
-    background-color: #28a745; /* Green */
+  .signup {
+    background-color: #1d8d37;
   }
   
-  .signup-button:hover {
-    background-color: #218838;
+  .signup:hover {
+    background-color: #0f7225;
   }
   
-  .login-button {
-    background-color: #007bff; /* Blue */
+  .login {
+    background-color: #065fbf;
   }
   
-  .login-button:hover {
-    background-color: #0069d9;
+  .login:hover {
+    background-color: #024c9b;
   }
-  
+
   .landing-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #0c0233c8;
+    color: white;
     text-align: center;
-    padding: 20px;
+    padding: 0;
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-size: 12px;
   }
-  

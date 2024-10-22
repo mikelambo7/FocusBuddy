@@ -106,6 +106,9 @@ const DashboardPage = () => {
           <img src="/fb_logo_hd.png" alt="Focus Buddy Logo" className="logo" />
           Focus Buddy!
         </h1>
+        <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
       </header>
 
       <nav>
@@ -115,98 +118,103 @@ const DashboardPage = () => {
         <NavLink to="/dashboard" className={({ isActive }) => `tab ${isActive ? 'active' : ''}`}>
           Dashboard
         </NavLink>
-        <button onClick={handleLogout} className="tab logout-button">
-          Logout
-        </button>
       </nav>
 
-      <section className="summary-section">
-        <h1>Account Summary</h1>
-        <div className="section-content">
-          <p><b>Overall Session Time:</b> {formatTime(summaryData.totalSessionTime)}</p>
-          <p><b>Overall Focus Time:</b> {formatTime(summaryData.totalFocusTime)}</p>
-          <p><b>Overall Number of Alerts triggered:</b> {summaryData.totalAlerts}</p>
-          <p><b>Average Focus Percentage:</b> {`${summaryData.averageFocusPercentage.toFixed(2)}%`}</p>
-          {summaryData.averageFocusTime !== 0 && (
-            <p><b>You Lose Focus Every:</b> {formatTime(summaryData.averageFocusTime)}</p>
-          )}
-        </div>
-      </section>
-
-      <section className="data-visualization">
-        <h1>Data Visualization</h1>
-        <div className="chart-container">
-          <div className="chart-toggle">
-            <button
-              className={chartType === 'line' ? 'active' : ''}
-              onClick={() => setChartType('line')}
-            >
-              Line
-            </button>
-            <button
-              className={chartType === 'pie' ? 'active' : ''}
-              onClick={() => setChartType('pie')}
-            >
-              Pie
-            </button>
-            <button
-              className={chartType === 'bar' ? 'active' : ''}
-              onClick={() => setChartType('bar')}
-            >
-              Bar
-            </button>
+      <main className="dashboard-main">
+        <section className="summary-section">
+          <h1>Account Summary</h1>
+          <div className="section-content">
+            <p><b>Overall Session Time:</b> {formatTime(summaryData.totalSessionTime)}</p>
+            <p><b>Overall Focus Time:</b> {formatTime(summaryData.totalFocusTime)}</p>
+            <p><b>Overall Number of Alerts triggered:</b> {summaryData.totalAlerts}</p>
+            <p><b>Average Focus Percentage:</b> {`${summaryData.averageFocusPercentage.toFixed(2)}%`}</p>
+            {summaryData.averageFocusTime !== 0 && (
+              <p><b>You Lose Focus Every:</b> {formatTime(summaryData.averageFocusTime)}</p>
+            )}
           </div>
-          <div className="chart">
-            <Dashboard chartType={chartType} />
-          </div>
-        </div>
-      </section >
+        </section>
 
-      <section className="recent-sessions">
-        <h1>Recent Sessions</h1>
-        {recentSessions.length > 0 ? (
-          <table>
-            <thead>
-              <tr>
-                <th><b>Session started</b></th>
-                <th><b>Session Duration</b></th>
-                <th><b>Focus Duration</b></th>
-                <th><b>Alerts Triggered</b></th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentSessions.map((session, index) => (
-                <tr key={index}>
-                  <td>{new Date(session.startTime).toLocaleString()}</td>
-                  <td>{formatTime(session.totalSessionTime)}</td>
-                  <td>{formatTime(session.totalTimeFocused)}</td>
-                  <td>{session.numberOfAlerts}</td>
+        <section className="data-visualization">
+          <h1>Data Visualization</h1>
+          <div className="chart-container">
+            <div className="chart-toggle">
+              <button
+                className={chartType === 'line' ? 'active' : ''}
+                onClick={() => setChartType('line')}
+              >
+                Line
+              </button>
+              <button
+                className={chartType === 'pie' ? 'active' : ''}
+                onClick={() => setChartType('pie')}
+              >
+                Pie
+              </button>
+              <button
+                className={chartType === 'bar' ? 'active' : ''}
+                onClick={() => setChartType('bar')}
+              >
+                Bar
+              </button>
+            </div>
+            <div className="chart">
+              <Dashboard chartType={chartType} />
+            </div>
+          </div>
+        </section >
+
+        <section className="recent-sessions">
+          <h1>Recent Sessions</h1>
+          {recentSessions.length > 0 ? (
+            <table>
+              <thead>
+                <tr>
+                  <th><b>Session started</b></th>
+                  <th><b>Session Duration</b></th>
+                  <th><b>Focus Duration</b></th>
+                  <th><b>Alerts Triggered</b></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {recentSessions.map((session, index) => (
+                  <tr key={index}>
+                    <td>{new Date(session.startTime).toLocaleString()}</td>
+                    <td>{formatTime(session.totalSessionTime)}</td>
+                    <td>{formatTime(session.totalTimeFocused)}</td>
+                    <td>{session.numberOfAlerts}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-        ) : (
-          <p className='no-session-text'><b>No session recorded</b></p> // Show this message if no sessions are available
-        )}
-      </section>
+          ) : (
+            <p className='no-session-text'><b>No session recorded</b></p> // Show this message if no sessions are available
+          )}
+        </section>
 
-      <div className="clear-history-btn-container">
-        <button className="clear-history-btn" onClick={() => setConfirmClearHistory(true)}>
-          Clear History
-        </button>
-      </div>
-
-
-      {confirmClearHistory && (
-        <div className="confirm-clear-history-container">
-          <div className="confirm-clear-history">
-            <h3>Are you sure you want to clear your session history?</h3>
-            <button onClick={() => setConfirmClearHistory(false)}>Cancel</button>
-            <button onClick={clearHistory}>Yes, Clear History</button>
-          </div>
+        <div className="clear-history-btn-container">
+          <button className="clear-history-btn" onClick={() => setConfirmClearHistory(true)}>
+            Clear History
+          </button>
         </div>
-      )}
+
+
+        {confirmClearHistory && (
+          <div className="confirm-clear-history-container">
+            <div className="confirm-clear-history">
+              <h3>Are you sure you want to clear your session history?</h3>
+              <button onClick={() => setConfirmClearHistory(false)}>Cancel</button>
+              <button onClick={clearHistory}>Yes, Clear History</button>
+            </div>
+          </div>
+        )}
+      </main>
+
+      <footer>
+        <p>
+          Designed & <span role="img" aria-label="Coded">👨‍💻</span> by Michael Lambo
+        </p>
+      </footer>
     </div >
   );
 };

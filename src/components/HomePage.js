@@ -92,6 +92,9 @@ const HomePage = () => {
           <img src="/fb_logo_hd.png" alt="Focus Buddy Logo" className="logo" />
           Focus Buddy!
         </h1>
+        <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
       </header>
 
       <nav>
@@ -101,12 +104,9 @@ const HomePage = () => {
         <NavLink to="/dashboard" className={({ isActive }) => `tab ${isActive ? 'active' : ''}`}>
           Dashboard
         </NavLink>
-        <button onClick={handleLogout} className="tab logout-button">
-          Logout
-        </button>
       </nav>
-      <main>
-        <h1>Welcome, {currentUser.email}</h1>
+      <main className="home-main">
+        <h1 className="welcome-message">Welcome, {currentUser.email}</h1>
         <div className="home-content">
           {!sessionActive && (
             <button className="session start" onClick={handleButtonClick}>
@@ -140,6 +140,11 @@ const HomePage = () => {
           <p>{getDailyFocusTip()}</p>
         </div>
       </main>
+      <footer>
+        <p>
+          Designed & <span role="img" aria-label="Coded">👨‍💻</span> by Michael Lambo
+        </p>
+      </footer>
     </div>
   );
 };

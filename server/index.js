@@ -12,14 +12,21 @@ const app = express();
 // To parse incoming JSON requests.
 app.use(express.json());
 
+// Import the Firebase Admin SDK
 const admin = require('firebase-admin');
-const serviceAccount = require('./path/to/serviceAccountKey.json');
 
+// Load the service account key JSON file which contains credentials for Firebase Admin SDK
+const serviceAccount = require('./config/serviceAccountKey.json');
+
+// Initialize the Firebase Admin app with the service account credentials
+// This allows the admin SDK to interact with Firebase services (like authentication)
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
+// Middleware function to authenticate an incoming request using Firebase ID Token
 const authenticateToken = async (req, res, next) => {
+  // Retrieve the token from the 'Authorization' header of the incoming request
   const idToken = req.headers.authorization;
 
   if (!idToken) {
@@ -27,8 +34,14 @@ const authenticateToken = async (req, res, next) => {
   }
 
   try {
+    // Verify the ID token with Firebase Admin SDK
+    // If valid, this returns the decoded token with user information
     const decodedToken = await admin.auth().verifyIdToken(idToken);
+
+    // Attach the decoded token xto the request object for future use
     req.user = decodedToken;
+
+    // Call the next middleware or route handler since the token is valid
     next();
   } catch (error) {
     console.error('Error verifying ID token:', error);
