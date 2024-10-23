@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { auth } from '../firebase/firebase.js';
 import { Chart, registerables } from 'chart.js';
 
 // Register the necessary components for Chart.js
@@ -10,8 +11,21 @@ const Dashboard = ({ chartType }) => {
   // Generate data for 10 most recent sessions
   useEffect(() => {
     const fetchSessions = async () => {
+      const user = auth.currentUser;
+      if (!user) {
+        // Handle unauthenticated state
+        return;
+      }
+
+      const idToken = await user.getIdToken();
+
       try {
-        const response = await fetch('/api/sessions');
+        const response = await fetch('/api/sessions', {
+          headers: {
+            'Authorization': idToken,
+          },
+        });
+
         if (response.ok) {
           const data = await response.json();
           const sessions = data.sessions;

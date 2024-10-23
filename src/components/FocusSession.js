@@ -126,8 +126,8 @@ const FocusSession = ({ setSessionActive }) => {
         noFaceTimeRef.current += 1;
         setTotalUnfocusedTime((prevTime) => prevTime + 1); // Increment unfocused time by 1 second
 
-        // If no face is detected for 5 seconds, trigger alert
-        if (noFaceTimeRef.current === 10) {
+        // If no face is detected for x seconds, trigger alert
+        if (noFaceTimeRef.current === 7) {
           // Play the first alert
           alertSound.play();
           setAlertsTriggered((prevCount) => prevCount + 1); // Increment focus lost count

@@ -89,7 +89,7 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Route to get all session data
-app.get('/api/sessions', async (req, res) => {
+app.get('/api/sessions', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.uid;
     // Fetch all session documents from the database
@@ -124,10 +124,11 @@ app.get('/api/sessions', async (req, res) => {
 });
 
 // Route to get the most recent session
-app.get('/api/sessions/latest', async (req, res) => {
+app.get('/api/sessions/latest', authenticateToken, async (req, res) => {
   try {
+    const userId = req.user.uid;
     // Fetch the most recent session, sorted by startTime in descending order
-    const latestSession = await Session.findOne().sort({ startTime: -1 });
+    const latestSession = await Session.findOne({ userId }).sort({ startTime: -1 });
 
     if (!latestSession) {
       return res.status(404).send('No session found');
@@ -141,9 +142,10 @@ app.get('/api/sessions/latest', async (req, res) => {
 });
 
 // Route to delete all session history
-app.delete('/api/sessions', async (req, res) => {
+app.delete('/api/sessions', authenticateToken, async (req, res) => {
   try {
-    await Session.deleteMany(); // Deletes all session documents from the collection
+    const userId = req.user.uid;
+    await Session.deleteMany({ userId }); // Deletes all session documents from the collection
     res.status(200).send('Session history cleared');
   } catch (error) {
     console.error('Failed to clear session history:', error);

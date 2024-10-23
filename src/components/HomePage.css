@@ -19,12 +19,9 @@
   font-size: 16px;
   color: #0C0233;
   text-align: center;
-  background: linear-gradient(to right, #310363, #02296d);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+  background: linear-gradient(to right, #2575FC, #5e8bd8);
   padding: 10px 20px;
-  border: 2px solid #2575FC;
+  border: 2px solid linear-gradient(to right, #2575FC, #5e8bd8);
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: inline-block;
