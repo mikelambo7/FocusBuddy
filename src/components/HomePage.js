@@ -147,7 +147,7 @@ const HomePage = () => {
         </div>
 
         <div className="focus-tip">
-          <p className="focus-tip-heading">daily focus tip!</p>
+          <p className="focus-tip-heading"><b>daily focus tip!</b></p>
           <p>{getDailyFocusTip()}</p>
         </div>
       </main>

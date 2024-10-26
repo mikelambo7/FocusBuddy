@@ -104,10 +104,10 @@ button img {
   width: 80%;
   background-color: #0C0233;
   color: white;
-  padding: 15px 55px;
+  padding: 15px 30px;
   margin: 12vh auto 1vh;
   border: 2px solid white;
-  border-radius: 60px;
+  border-radius: 15px;
 }
 
 .focus-tip-heading {
