@@ -5,7 +5,7 @@ import { Chart, registerables } from 'chart.js';
 // Register the necessary components for Chart.js
 Chart.register(...registerables);
 
-const Dashboard = ({ chartType }) => {
+const Dashboard = ({ chartType, dataType }) => {
   const [data, setData] = useState([]);
 
   // Generate data for 10 most recent sessions
@@ -34,6 +34,7 @@ const Dashboard = ({ chartType }) => {
           const formattedData = recentSessions.map((session) => ({
             startTime: session.startTime,
             focusPercent: session.focusPercent,
+            numberOfAlerts: session.numberOfAlerts,
           }));
 
           setData(formattedData);
@@ -77,8 +78,10 @@ const Dashboard = ({ chartType }) => {
         labels: data.map((session) => new Date(session.startTime).toLocaleTimeString()),
         // Defines the data series displayed in the chart.
         datasets: [{
-          label: 'Average Focus Percentage',
-          data: data.map((session) => session.focusPercent), // Calculates average focus time for each session
+          label: dataType === 'focus' ? 'Average Focus Percentage' : 'Alerts Triggered per Session',
+          data: dataType === 'focus' 
+            ? data.map((session) => session.focusPercent) // Calculates average focus time for each session
+            : data.map((session) => session.numberOfAlerts), // Calculates total number of alerts for each session
           fill: false,
           backgroundColor: backgroundColor,
           borderColor: borderColor,
@@ -128,7 +131,7 @@ const Dashboard = ({ chartType }) => {
           y: { // Configures the Y-axis
             title: {
               display: true,
-              text: 'Average Focus Percentage (%)',
+              text: dataType === 'focus' ? 'Average Focus Percentage (%)' : 'Alerts Count',
               color: '#1C104C',
               font: {
                 size: 12,
@@ -148,7 +151,7 @@ const Dashboard = ({ chartType }) => {
     });
 
     return () => chartInstance.destroy(); // Cleanup to avoid memory leaks
-  }, [data, chartType]);
+  }, [data, chartType, dataType]);
 
   return (
     <>

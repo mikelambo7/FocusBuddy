@@ -49,8 +49,65 @@ section h1 {
   margin: 0 auto;
 }
 
+.data-visualization-content {
+  display: flex;
+  width: 100%;
+}
+
+.data-visualization-toggle {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 0 200px;
+}
+
 .chart-container {
-  padding: 10px 150px;
+  width: 70%;
+  padding: 20px 0;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.data-visualization-toggle {
+  align-items: center;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.data-visualization-toggle p {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.data-visualization-toggle button {
+  width: 16em;
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #1C104C;
+  background-color: #fff;
+  border: 2px solid #1C104C;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 5px;
+}
+
+.data-visualization-toggle button:hover {
+  background-color: #e8e8e8;
+}
+
+.data-visualization-toggle button.active {
+  background-color: #1C104C;
+  color: #fff;
 }
 
 .chart-toggle {
@@ -71,7 +128,7 @@ section h1 {
 }
 
 .chart-toggle button.active {
-  background-color: #007bff;
+  background-color: #20159a;
   color: white;
 }
 
@@ -80,6 +137,10 @@ section h1 {
 }
 
 .chart {
+  width: 90%;
+}
+
+.pie-chart {
   width: 65%;
   margin: 0 auto;
 }
@@ -87,6 +148,13 @@ section h1 {
 .chart-text {
   display: flex;
   justify-content: center;
+}
+
+.divider-line {
+  width: 1px;
+  background-color: #1c104c20;
+  height: 60vh;
+  margin: auto 70px auto 0;
 }
 
 table {

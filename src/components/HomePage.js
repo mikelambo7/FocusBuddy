@@ -28,8 +28,19 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchRecentSession = async () => {
+      if (!currentUser) {
+        // Handle unauthenticated state
+        return;
+      }
+
+      const idToken = await currentUser.getIdToken();
+
       try {
-        const response = await fetch('/api/sessions/latest');
+        const response = await fetch('/api/sessions/latest', {
+          headers: {
+            'Authorization': idToken,
+          },
+        });
         if (response.ok) {
           const data = await response.json();
           setRecentStats(data);
@@ -42,7 +53,7 @@ const HomePage = () => {
     };
 
     fetchRecentSession();
-  }, []);
+  }, [currentUser]);
 
   const formatTime = (seconds) => {
     const hrs = Math.floor(seconds / 3600);

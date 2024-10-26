@@ -7,12 +7,13 @@ import './DashboardPage.css';
 
 const DashboardPage = () => {
   const [chartType, setChartType] = useState('line'); // State to manage the active chart type
+  const [dataType, setDataType] = useState('focus'); // State to toggle between focus and alerts chart data
   const [sessions, setSessions] = useState([]); // State to hold session data
   const [confirmClearHistory, setConfirmClearHistory] = useState(false);
   const [summaryData, setSummaryData] = useState({
     totalSessionTime: 0,
     totalFocusTime: 0,
-    totalAlerts: 0,
+    averageAlerts: 0,
     averageFocusPercentage: 0,
     averageFocusTime: 0,
   });
@@ -43,7 +44,7 @@ const DashboardPage = () => {
           setSummaryData({
             totalSessionTime: data.totalSessionTime,
             totalFocusTime: data.totalFocusTime,
-            totalAlerts: data.totalAlerts,
+            averageAlerts: data.averageAlerts,
             averageFocusPercentage: data.averageFocusPercentage,
             averageFocusTime: data.totalSessionTime !== 0 && data.totalAlerts !== 0 ? (Math.floor(data.totalSessionTime / data.totalAlerts)) : 0,
           });
@@ -126,7 +127,7 @@ const DashboardPage = () => {
           <div className="section-content">
             <p><b>Overall Session Time:</b> {formatTime(summaryData.totalSessionTime)}</p>
             <p><b>Overall Focus Time:</b> {formatTime(summaryData.totalFocusTime)}</p>
-            <p><b>Overall Number of Alerts triggered:</b> {summaryData.totalAlerts}</p>
+            <p><b>Average Number of Alerts per Session:</b> {summaryData.averageAlerts.toFixed(2)}</p>
             <p><b>Average Focus Percentage:</b> {`${summaryData.averageFocusPercentage.toFixed(2)}%`}</p>
             {summaryData.averageFocusTime !== 0 && (
               <p><b>You Lose Focus Every:</b> {formatTime(summaryData.averageFocusTime)}</p>
@@ -136,29 +137,49 @@ const DashboardPage = () => {
 
         <section className="data-visualization">
           <h1>Data Visualization</h1>
-          <div className="chart-container">
-            <div className="chart-toggle">
+          <div className="data-visualization-content">
+            <div className="data-visualization-toggle">
+              <p>Select Data to Display:</p>
               <button
-                className={chartType === 'line' ? 'active' : ''}
-                onClick={() => setChartType('line')}
+                onClick={() => setDataType('focus')}
+                className={dataType === 'focus' ? 'active' : ''}
               >
-                Line
+                Focus Level
               </button>
               <button
-                className={chartType === 'pie' ? 'active' : ''}
-                onClick={() => setChartType('pie')}
+                onClick={() => setDataType('alerts')}
+                className={dataType === 'alerts' ? 'active' : ''}
               >
-                Pie
-              </button>
-              <button
-                className={chartType === 'bar' ? 'active' : ''}
-                onClick={() => setChartType('bar')}
-              >
-                Bar
+                Alerts Triggered
               </button>
             </div>
-            <div className="chart">
-              <Dashboard chartType={chartType} />
+
+            <div className="divider-line"></div>
+
+            <div className="chart-container">
+              <div className="chart-toggle">
+                <button
+                  className={chartType === 'line' ? 'active' : ''}
+                  onClick={() => setChartType('line')}
+                >
+                  Line
+                </button>
+                <button
+                  className={chartType === 'pie' ? 'active' : ''}
+                  onClick={() => setChartType('pie')}
+                >
+                  Pie
+                </button>
+                <button
+                  className={chartType === 'bar' ? 'active' : ''}
+                  onClick={() => setChartType('bar')}
+                >
+                  Bar
+                </button>
+              </div>
+              <div className={`${chartType === 'pie' ? 'pie-chart' : 'chart'}`}>
+                <Dashboard chartType={chartType} dataType={dataType} />
+              </div>
             </div>
           </div>
         </section >

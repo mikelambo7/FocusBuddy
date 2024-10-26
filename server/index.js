@@ -109,12 +109,14 @@ app.get('/api/sessions', authenticateToken, async (req, res) => {
     });
 
     const averageFocusPercentage = totalSessionTime ? (totalFocusTime / totalSessionTime) * 100 : 0;
+    const averageAlerts = sessions.length > 0 ? totalAlerts / sessions.length : 0;
 
     res.status(200).json({
       sessions,
       totalSessionTime,
       totalFocusTime,
       totalAlerts,
+      averageAlerts,
       averageFocusPercentage
     });
   } catch (error) {

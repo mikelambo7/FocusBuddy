@@ -15,6 +15,8 @@ const FocusSession = ({ setSessionActive }) => {
   const [showConfirmation, setShowConfirmation] = useState(false); // Confirmation modal state
   const noFaceTimeRef = useRef(0); // Ref to track noFaceTime
   const faceDetectedRef = useRef(true); // Tracks face detection status using a ref
+  const NO_FACE_THRESHOLD = 7;
+  const NO_FACE_THRESHOLD_2 = (2 * NO_FACE_THRESHOLD);
 
   const alertSoundRef = useRef(new Audio(ping));
   const alertSoundRef2 = useRef(new Audio(pingSound));
@@ -127,12 +129,12 @@ const FocusSession = ({ setSessionActive }) => {
         setTotalUnfocusedTime((prevTime) => prevTime + 1); // Increment unfocused time by 1 second
 
         // If no face is detected for x seconds, trigger alert
-        if (noFaceTimeRef.current === 7) {
+        if (noFaceTimeRef.current === NO_FACE_THRESHOLD) {
           // Play the first alert
           alertSound.play();
           setAlertsTriggered((prevCount) => prevCount + 1); // Increment focus lost count
           triggerBrowserNotification1(); // Trigger browser alert notification
-        } else if (noFaceTimeRef.current === 20) {
+        } else if (noFaceTimeRef.current === NO_FACE_THRESHOLD_2) {
           // Play the second alert
           alertSound2.play();
           setAlertsTriggered((prevCount) => prevCount + 1);
@@ -146,15 +148,28 @@ const FocusSession = ({ setSessionActive }) => {
     }, 1000); // Check every second
 
     return () => clearInterval(interval); // Clean up interval on unmount
-  }, []);
+  }, [NO_FACE_THRESHOLD_2]);
 
   useEffect(() => {
     setStartTime(new Date()); // Set the session's start time as the current time
   }, []);
 
   const fetchPreviousSession = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      // Handle unauthenticated state
+      return;
+    }
+
+    const idToken = await user.getIdToken();
+
     try {
-      const response = await fetch('/api/sessions/latest'); // Fetch the previous session
+      const response = await fetch('/api/sessions/latest', { // Fetch the previous session
+        headers: {
+          'Authorization': idToken,
+        },
+      });
+
       if (response.ok) {
         const data = await response.json();
         setPreviousSessionFocus(data.focusPercent); // Store the focus percentage from the previous session
@@ -250,6 +265,7 @@ const FocusSession = ({ setSessionActive }) => {
   const focusComparison = () => {
     if (previousSessionFocus !== null && sessionStats) {
       const focusDifference = sessionStats.focusPercent - previousSessionFocus;
+      console.log("HERE");
 
       if (focusDifference > 0) {
         return (
