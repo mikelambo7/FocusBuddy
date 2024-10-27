@@ -125,6 +125,31 @@ const DashboardPage = () => {
         <section className="summary-section">
           <h1>Account Summary</h1>
           <div className="section-content">
+            <div className="data-item">
+              <p><b>Overall Session Time:</b></p>
+              <p>{formatTime(summaryData.totalSessionTime)}</p>
+            </div>
+            <div className="data-item">
+              <p><b>Overall Focus Time:</b></p>
+              <p>{formatTime(summaryData.totalFocusTime)}</p>
+            </div>
+            <div className="data-item">
+              <p><b>Average Number of Alerts per Session:</b></p>
+              <p>{summaryData.averageAlerts.toFixed(2)}</p>
+            </div>
+            <div className="data-item">
+              <p><b>Average Focus Percentage:</b></p>
+              <p>{`${summaryData.averageFocusPercentage.toFixed(2)}%`}</p>
+            </div>
+            {summaryData.averageFocusTime !== 0 && (
+              <div className="data-item">
+                <p><b>You Lose Focus Every:</b></p>
+                <p>{formatTime(summaryData.averageFocusTime)}</p>
+              </div>
+            )}
+          </div>
+
+          {/* <div className="section-content">
             <p><b>Overall Session Time:</b> {formatTime(summaryData.totalSessionTime)}</p>
             <p><b>Overall Focus Time:</b> {formatTime(summaryData.totalFocusTime)}</p>
             <p><b>Average Number of Alerts per Session:</b> {summaryData.averageAlerts.toFixed(2)}</p>
@@ -132,7 +157,7 @@ const DashboardPage = () => {
             {summaryData.averageFocusTime !== 0 && (
               <p><b>You Lose Focus Every:</b> {formatTime(summaryData.averageFocusTime)}</p>
             )}
-          </div>
+          </div> */}
         </section>
 
         <section className="data-visualization">

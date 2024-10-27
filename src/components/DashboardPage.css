@@ -26,7 +26,23 @@ section h1 {
 }
 
 .section-content {
-  padding: 0 5.5rem;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1px 15px;
+  align-items: start;
+  padding: 0 2.5rem;
+}
+
+.data-item {
+  display: contents;
+}
+
+.data-item p:first-child {
+  text-align: right;
+}
+
+.data-item p:last-child {
+  text-align: left;
 }
 
 .summary-section,
