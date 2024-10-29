@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase/firebase.js';
 import { useAuth } from '../firebase/AuthContext.js';
+import { Line } from 'react-chartjs-2';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import FocusSession from './FocusSession';
@@ -11,6 +12,7 @@ const HomePage = () => {
   const { currentUser } = useAuth();
   const [sessionActive, setSessionActive] = useState(false);
   const [recentStats, setRecentStats] = useState(null);
+  const [chartData, setChartData] = useState(null);
 
   // Array of daily focus tips
   const focusTips = [
@@ -52,7 +54,42 @@ const HomePage = () => {
       }
     };
 
+    const fetchChartData = async () => {
+      if (!currentUser) return;
+
+      const idToken = await currentUser.getIdToken();
+
+      try {
+        const response = await fetch('/api/sessions', {
+          headers: { 'Authorization': idToken },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const recentSessions = data.sessions.slice(-10);
+
+          setChartData({
+            labels: recentSessions.map(session =>
+              new Date(session.startTime).toLocaleDateString()
+            ),
+            datasets: [
+              {
+                label: 'Focus Percentage',
+                data: recentSessions.map(session => session.focusPercent),
+                borderColor: 'red',
+                backgroundColor: '#fff',
+                fill: false,
+              }
+            ]
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching sessions for chart:', error);
+      }
+    };
+
     fetchRecentSession();
+    fetchChartData();
   }, [currentUser]);
 
   const formatTime = (seconds) => {
@@ -96,6 +133,17 @@ const HomePage = () => {
       });
   };
 
+  const paddingBelowLegendPlugin = {
+    id: 'paddingBelowLegends',
+    beforeInit: function(chart) {
+      const originalFit = chart.legend.fit;
+      chart.legend.fit = function fit() {
+        originalFit.bind(chart.legend)();
+        this.height += 20; // Adds 20px of padding below the legend
+      };
+    }
+  };
+
   return (
     <div className="home-container">
       <header>
@@ -128,21 +176,69 @@ const HomePage = () => {
 
           {sessionActive && <FocusSession setSessionActive={setSessionActive} />}
 
-          <div className="recent-stats">
-            <p className="content-header"><b>Recent Focus Stats:</b></p>
-            {recentStats ? (
-              <>
-                <p><b>Total Session Time:</b> {formatTime(recentStats.totalSessionTime)}</p>
-                <p><b>Total Focused Time:</b> {formatTime(recentStats.totalTimeFocused)}</p>
-                <p><b>Number of Alerts:</b> {recentStats.numberOfAlerts}</p>
-                <p><b>Focus Percent:</b> {`${recentStats.focusPercent.toFixed(2)}%`}</p>
-                {recentStats.totalSessionTime !== 0 && recentStats.numberOfAlerts !== 0 && (
-                  <p><b>Focus Lost Every:</b> {formatTime(Math.floor(recentStats.totalSessionTime / recentStats.numberOfAlerts))}</p>
-                )}
-              </>
-            ) : (
-              <p>No session has been recorded yet.</p>
-            )}
+          <div className="stats-and-chart">
+            <div className="recent-stats">
+              <p className="content-header"><b>Recent Focus Stats:</b></p>
+              {recentStats ? (
+                <>
+                  <p><b>Total Session Time:</b> {formatTime(recentStats.totalSessionTime)}</p>
+                  <p><b>Total Focused Time:</b> {formatTime(recentStats.totalTimeFocused)}</p>
+                  <p><b>Number of Alerts:</b> {recentStats.numberOfAlerts}</p>
+                  <p><b>Focus Percent:</b> {`${recentStats.focusPercent.toFixed(2)}%`}</p>
+                  {recentStats.totalSessionTime !== 0 && recentStats.numberOfAlerts !== 0 && (
+                    <p><b>Focus Lost Every:</b> {formatTime(Math.floor(recentStats.totalSessionTime / recentStats.numberOfAlerts))}</p>
+                  )}
+                </>
+              ) : (
+                <p>No session has been recorded yet.</p>
+              )}
+            </div>
+
+            <div className="chart-container-home">
+              {chartData ? (
+                <Line
+                  data={chartData}
+                  plugins={[paddingBelowLegendPlugin]}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                      legend: {
+                        display: true,
+                      },
+                    },
+                    scales: {
+                      x: {
+                        title: {
+                          display: false,
+                        },
+                        grid: {
+                          color: 'rgba(0, 0, 0, 0.01)',
+                          drawBorder: false,
+                        },
+                        ticks: {
+                          display: false,
+                        }
+                      },
+                      y: {
+                        title: {
+                          display: false,
+                        },
+                        grid: {
+                          color: 'rgba(0, 0, 0, 0.03)',
+                          drawBorder: false,
+                        },
+                        ticks: {
+                          display: false,
+                        }
+                      }
+                    }
+                  }}
+                />
+              ) : (
+                <p>Loading chart data...</p>
+              )}
+            </div>
           </div>
         </div>
 
