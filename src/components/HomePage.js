@@ -207,6 +207,15 @@ const HomePage = () => {
                         display: true,
                       },
                     },
+                    animations: {
+                      tension: {
+                        duration: 1500,
+                        easing: 'linear',
+                        from: 0,
+                        to: 0.2,
+                        loop: true
+                      }
+                    },
                     scales: {
                       x: {
                         title: {

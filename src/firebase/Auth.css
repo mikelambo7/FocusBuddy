@@ -13,7 +13,7 @@
 .login-page {
     position: relative;
     min-height: 100vh;
-    background-image: url('/focusing.png');
+    background-image: url('/fb_landing.png');
     background-size: cover;
     background-position: center;
     font-family: 'Roboto', sans-serif;
@@ -167,7 +167,7 @@
 .signup-page {
     position: relative;
     min-height: 100vh;
-    background-image: url('/focusing.png');
+    background-image: url('/fb_landing.png');
     background-size: cover;
     background-position: center;
     font-family: 'Roboto', sans-serif;

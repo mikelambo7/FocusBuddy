@@ -131,7 +131,7 @@ const Dashboard = ({ chartType, dataType }) => {
           y: { // Configures the Y-axis
             title: {
               display: true,
-              text: dataType === 'focus' ? 'Average Focus Percentage (%)' : 'Alerts Count',
+              text: dataType === 'focus' ? 'Focus Percentage (%)' : 'Alerts Count',
               color: '#1C104C',
               font: {
                 size: 12,
