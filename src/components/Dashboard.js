@@ -22,7 +22,7 @@ const Dashboard = ({ chartType, dataType }) => {
       try {
         const response = await fetch('/api/sessions', {
           headers: {
-            'Authorization': idToken,
+            'Authorization': `Bearer ${idToken}`,
           },
         });
 
@@ -75,7 +75,7 @@ const Dashboard = ({ chartType, dataType }) => {
       type: chartType,
       data: {
         // Specifies the labels for the X-axis.
-        labels: data.map((session) => new Date(session.startTime).toLocaleTimeString()),
+        labels: data.map((session) => new Date(session.startTime).toLocaleString()),
         // Defines the data series displayed in the chart.
         datasets: [{
           label: dataType === 'focus' ? 'Average Focus Percentage' : 'Alerts Triggered per Session',

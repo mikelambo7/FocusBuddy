@@ -34,12 +34,13 @@ const DashboardPage = () => {
       try {
         const response = await fetch('/api/sessions', {
           headers: {
-            'Authorization': idToken,
+            'Authorization': `Bearer ${idToken}`,
           },
         });
 
         if (response.ok) {
           const data = await response.json();
+
           setSessions(data.sessions); // Set the fetched session data
           setSummaryData({
             totalSessionTime: data.totalSessionTime,
@@ -61,12 +62,24 @@ const DashboardPage = () => {
 
   // Function to clear session history
   const clearHistory = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      // Handle unauthenticated state
+      return;
+    }
+
+    const idToken = await user.getIdToken();
+
     try {
       const response = await fetch('/api/sessions', {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${idToken}`,
+        },
       });
+
       if (response.ok) {
-        setSessions([]); // Clear the session state if successful
+        setSessions([]);
         setConfirmClearHistory(false);
       } else {
         console.error('Failed to clear session history');

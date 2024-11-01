@@ -54,7 +54,7 @@ const FocusSession = ({ setSessionActive }) => {
         console.error('This browser does not support desktop notifications.');
         return;
       }
-    
+
       if (Notification.permission === 'granted') {
         new Notification('Focus Alert', {
           body: "You're losing focus, pay attention!",
@@ -87,7 +87,7 @@ const FocusSession = ({ setSessionActive }) => {
         console.error('This browser does not support desktop notifications.');
         return;
       }
-    
+
       if (Notification.permission === 'granted') {
         new Notification('Focus Alert', {
           body: "You've lost focus for too long. You need to pay attention!",
@@ -141,7 +141,7 @@ const FocusSession = ({ setSessionActive }) => {
           triggerBrowserNotification2();
           noFaceTimeRef.current = 0;
         }
-  
+
       } else {
         noFaceTimeRef.current = 0;
       }
@@ -166,7 +166,7 @@ const FocusSession = ({ setSessionActive }) => {
     try {
       const response = await fetch('/api/sessions/latest', { // Fetch the previous session
         headers: {
-          'Authorization': idToken,
+          'Authorization': `Bearer ${idToken}`,
         },
       });
 
@@ -189,19 +189,23 @@ const FocusSession = ({ setSessionActive }) => {
       // User is not authenticated
       return;
     }
-  
+
     const idToken = await user.getIdToken();
 
     const endTime = new Date();
 
+    const sessionDuration = Math.floor((endTime - startTime) / 1000); // in seconds
+    const totalTimeFocused = sessionDuration - totalUnfocusedTime;
+    const focusPercent = (totalTimeFocused / sessionDuration) * 100;
+
     const sessionData = {
-      startTime: new Date(startTime),
+      startTime: startTime,
       endTime: endTime,
-      totalSessionTime: Math.floor((endTime - startTime) / 1000), // in seconds
-      totalTimeUnfocused: totalUnfocusedTime, // in seconds
-      totalTimeFocused: Math.floor((endTime - startTime) / 1000) - totalUnfocusedTime,
+      totalSessionTime: sessionDuration,
+      totalTimeUnfocused: totalUnfocusedTime,
+      totalTimeFocused: totalTimeFocused,
       numberOfAlerts: alertsTriggered,
-      focusPercent: ((Math.floor((endTime - startTime) / 1000) - totalUnfocusedTime) / (Math.floor((endTime - startTime) / 1000))) * 100,
+      focusPercent: focusPercent,
     };
 
     try {
@@ -210,7 +214,7 @@ const FocusSession = ({ setSessionActive }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': idToken,
+          'Authorization': `Bearer ${idToken}`,
         },
         body: JSON.stringify(sessionData),
       });
@@ -316,7 +320,7 @@ const FocusSession = ({ setSessionActive }) => {
             <p>Focus Percent: {`${sessionStats.focusPercent.toFixed(2)}%`} </p>
 
             {focusComparison()}
-            
+
             <button onClick={() => {
               setSessionStats(null);
               setSessionActive(false);

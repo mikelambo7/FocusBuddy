@@ -40,9 +40,10 @@ const HomePage = () => {
       try {
         const response = await fetch('/api/sessions/latest', {
           headers: {
-            'Authorization': idToken,
+            'Authorization': `Bearer ${idToken}`,
           },
         });
+
         if (response.ok) {
           const data = await response.json();
           setRecentStats(data);
@@ -61,7 +62,7 @@ const HomePage = () => {
 
       try {
         const response = await fetch('/api/sessions', {
-          headers: { 'Authorization': idToken },
+          headers: { 'Authorization': `Bearer ${idToken}`, },
         });
 
         if (response.ok) {
@@ -70,7 +71,7 @@ const HomePage = () => {
 
           setChartData({
             labels: recentSessions.map(session =>
-              new Date(session.startTime).toLocaleDateString()
+              new Date(session.startTime).toLocaleString()
             ),
             datasets: [
               {
@@ -123,19 +124,18 @@ const HomePage = () => {
 
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        navigate('/');
-      })
-      .catch((error) => {
-        console.error('Logout error:', error);
-      });
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const paddingBelowLegendPlugin = {
     id: 'paddingBelowLegends',
-    beforeInit: function(chart) {
+    beforeInit: function (chart) {
       const originalFit = chart.legend.fit;
       chart.legend.fit = function fit() {
         originalFit.bind(chart.legend)();
