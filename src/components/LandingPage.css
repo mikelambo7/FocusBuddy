@@ -1,99 +1,151 @@
 .landing-page {
-    background-image: url('/focusing.png');
-    background-size: cover;
-    background-position: center;
-    height: 100vh;
-    color: #ffffff;
-  }
-  
-  .overlay {
-    background-color: rgba(0, 0, 0, 0.6);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
+  background-image: url('/focusing.png');
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
-  .title-landing {
-    font-family: "Londrina Solid", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 124px;
-    color: #0C0233;
-    background: #fff;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-stroke: 6px transparent;
-    margin: 0 70px 0;
-    padding-inline: 5px;
-    text-align: center;
-  }
+.overlay {
+  background-color: rgba(0, 0, 0, 0.6);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  .logo-landing {
-    width: 90px;
-    height: auto;
-    margin-right: 25px;
-    vertical-align: middle;
-  }
-  
-  .landing-content {
-    text-align: center;
-    padding: 0 20px;
-  }
-  
-  .landing-content h2 {
-    font-size: 3em;
-    margin-bottom: 20px;
-  }
-  
-  .landing-content p {
-    font-style: italic;
-    font-size: 1.2em;
-  }
-  
-  .landing-buttons {
-    margin-top: 40px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-  }
-  
-  .landing-button {
-    width:8rem;
-    padding: 30px 60px;
-    font-size: 1.4em;
-    color: #ffffff;
-    text-decoration: none;
-    border-radius: 50px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-    transition: background-color 0.3s;
-  }
-  
-  .signup {
-    background-color: #1d8d37;
-  }
-  
-  .signup:hover {
-    background-color: #0f7225;
-  }
-  
-  .login {
-    background-color: #065fbf;
-  }
-  
-  .login:hover {
-    background-color: #024c9b;
-  }
+.title-landing {
+  font-family: "Londrina Solid", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 124px;
+  color: #0C0233;
+  background: #fff;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-stroke: 6px transparent;
+  margin: 0 70px 0;
+  padding-inline: 5px;
+  text-align: center;
+}
 
-  .landing-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #0c0233c8;
-    color: white;
-    text-align: center;
-    padding: 0;
-    font-family: "Roboto", sans-serif;
-    font-weight: 400;
-    font-size: 12px;
-  }
+.logo-landing {
+  width: 90px;
+  height: auto;
+  margin-right: 25px;
+  vertical-align: middle;
+}
+
+.landing-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.landing-content h2 {
+  font-size: 3em;
+  margin-bottom: 20px;
+}
+
+.landing-content-text {
+  font-style: italic;
+  font-size: 1.2em;
+  margin: 10px 0;
+}
+
+.landing-buttons {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.landing-button {
+  width: 8rem;
+  padding: 30px 60px;
+  font-size: 1.4em;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 50px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s;
+}
+
+.signup {
+  background-color: #1d8d37;
+}
+
+.signup:hover {
+  background-color: #0f7225;
+}
+
+.login {
+  background-color: #065fbf;
+}
+
+.login:hover {
+  background-color: #024c9b;
+}
+
+.how-it-works-toggle {
+  background-color: #0C0233;
+  color: #ffffff;
+  padding: 0 20px;
+  text-align: center;
+  margin-top: 40px;
+  cursor: pointer;
+  border: 2px solid #f3f2f8;
+  border-radius: 23px;
+  font-size: 0.9em;
+  display: inline-block;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.how-it-works-toggle:hover {
+  background-color: #06011b;
+  transform: scale(1.05);
+}
+
+.how-it-works {
+  background-color: #0C0233;
+  color: #ffffff;
+  padding: 15px;
+  margin: 10px 0 0;
+  border: 2px solid #f3f2f8;
+  border-radius: 8px;
+  max-width: 400px;
+  text-align: left;
+  position: absolute;
+}
+
+.how-it-works ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.how-it-works li {
+  margin-bottom: 10px;
+  font-size: 1em;
+  line-height: 1.5;
+}
+
+.landing-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #0c0233c8;
+  color: white;
+  text-align: center;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+}
