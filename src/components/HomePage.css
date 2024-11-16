@@ -159,10 +159,6 @@ button img {
   align-items: center;
 }
 
-.webcam-feed video {
-  display: none;
-}
-
 .notification-bar {
   position: fixed;
   top: 0;
