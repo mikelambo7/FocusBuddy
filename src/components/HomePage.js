@@ -195,7 +195,7 @@ const HomePage = () => {
             </div>
 
             <div className="chart-container-home">
-              {chartData ? (
+              {chartData && chartData.datasets[0].data.length > 0  ? (
                 <Line
                   data={chartData}
                   plugins={[paddingBelowLegendPlugin]}
@@ -245,7 +245,7 @@ const HomePage = () => {
                   }}
                 />
               ) : (
-                <p>Loading chart data...</p>
+                <p>No chart data found..</p>
               )}
             </div>
           </div>

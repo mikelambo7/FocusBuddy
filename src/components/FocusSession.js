@@ -15,7 +15,7 @@ const FocusSession = ({ setSessionActive }) => {
   const [showConfirmation, setShowConfirmation] = useState(false); // Confirmation modal state
   const noFaceTimeRef = useRef(0); // Ref to track noFaceTime
   const faceDetectedRef = useRef(true); // Tracks face detection status using a ref
-  const NO_FACE_THRESHOLD = 7;
+  const NO_FACE_THRESHOLD = 5;
   const NO_FACE_THRESHOLD_2 = (2 * NO_FACE_THRESHOLD);
 
   const alertSoundRef = useRef(new Audio(ping));
@@ -24,6 +24,11 @@ const FocusSession = ({ setSessionActive }) => {
   /* To process whether a face has been detected by the webcam */
   const handleFaceDetected = useCallback((isDetected) => { // useCallback ensures function is memoized and not recreated on every render
     faceDetectedRef.current = isDetected; // Update the face detected flag
+    if (isDetected) {
+      console.log('Face is looking straight at the screen.');
+    } else {
+      console.log('Face is not looking straight.');
+    }
   }, []);
 
   // Request permission from the user to allow browser notifications

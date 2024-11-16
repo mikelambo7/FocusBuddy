@@ -65,7 +65,7 @@ const SignUp = () => {
 
         createUserWithEmailAndPassword(auth, email, password)
             .then(() => {
-                navigate('/home');
+                navigate('/login');
             })
             .catch((error) => {
                 setError('Failed to create an account.');

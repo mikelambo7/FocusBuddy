@@ -1,73 +1,138 @@
 import React, { useRef, useEffect } from 'react';
+import * as tf from '@tensorflow/tfjs';
+import * as faceLandmarksDetection from '@tensorflow-models/face-landmarks-detection';
+import '@tensorflow/tfjs-backend-webgl';
 
 const WebcamFeed = ({ onFaceDetected }) => {
   const videoRef = useRef(null);
   const streamRef = useRef(null);
-  const workerRef = useRef(null);
+  const animationFrameIdRef = useRef(null);
 
   useEffect(() => {
-    let isMounted = true; // Track if component is still mounted
+    let isMounted = true;
 
-    // Access webcam
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(stream => {
-        if (!isMounted) {
-          // Component unmounted before stream was set
-          stream.getTracks().forEach(track => track.stop());
-          return;
+    const runFaceMesh = async () => {
+      try {
+        await tf.setBackend('webgl');
+        await tf.ready();
+
+        // Load the MediaPipe FaceMesh model
+        const model = faceLandmarksDetection.SupportedModels.MediaPipeFaceMesh;
+        const detectorConfig = {
+          runtime: 'mediapipe',
+          maxFaces: 1,
+          refineLandmarks: true,
+          solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh',
+        };
+        const detector = await faceLandmarksDetection.createDetector(model, detectorConfig);
+
+        // Set up camera stream
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          streamRef.current = stream;
         }
-        videoRef.current.srcObject = stream;
-        streamRef.current = stream;
-      })
-      .catch(err => console.error('Error accessing webcam:', err));
 
-    // Initialize Web Worker
-    workerRef.current = new Worker(`${process.env.PUBLIC_URL}/FaceDetectionWorker.worker.js`);
-
-    workerRef.current.onmessage = function (e) {
-      const faceDetected = e.data;
-      onFaceDetected(faceDetected);
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current.play();
+          detectFace(detector);
+        };
+      } catch (error) {
+        console.error('Error in runFaceMesh:', error);
+      }
     };
 
-    const captureFrame = () => {
-      // Gives access to the video feed from the user's webcam.
-      const video = videoRef.current;
-      // Ensure video is ready.
-      if (!video || video.readyState !== 4) return; 
-      // Creates an element in memory that will be used to draw and manipulate the current video frame for further processing.
-      const canvas = document.createElement('canvas');
-      // Set the width and height of the canvas to match the resolution of the video feed.
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      // Create a 2D rendering context for a 'canvas' element in HTML which allows shapes to be drawn on the canvas.
-      const context = canvas.getContext('2d');
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const detectFace = async (detector) => {
+      try {
+        if (videoRef.current.readyState === 4 && isMounted) {
+          const video = videoRef.current;
 
-      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+          const detectionLoop = async () => {
+            if (!isMounted) return;
 
-      // Send image data to Web Worker
-      workerRef.current.postMessage(imageData);
+            // Make predictions
+            const faces = await detector.estimateFaces(video);
+
+            console.log('Faces detected:', faces.length);
+
+            let faceDetected = false;
+
+            if (faces.length > 0) {
+              const keypoints = faces[0].keypoints;
+
+              // Determine if the face is looking directly
+              const isLookingStraight = checkIfLookingStraight(keypoints);
+              faceDetected = isLookingStraight;
+            }
+
+            // Pass the result to the parent component
+            onFaceDetected(faceDetected);
+
+            // Continue the detection loop
+            animationFrameIdRef.current = requestAnimationFrame(detectionLoop);
+          };
+
+          detectionLoop();
+        }
+      } catch (error) {
+        console.error('Error in detectFace:', error);
+      }
     };
 
-    // Set up an interval to capture frames
-    const interval = setInterval(captureFrame, 500);
+    const checkIfLookingStraight = (keypoints) => {
+      const noseTipIndex = 1;
+      const leftEyeIndex = 33;
+      const rightEyeIndex = 263;
+    
+      const noseTip = keypoints[noseTipIndex];
+      const leftEye = keypoints[leftEyeIndex];
+      const rightEye = keypoints[rightEyeIndex];
+    
+      if (!noseTip || !leftEye || !rightEye) {
+        console.warn('Missing keypoints for gaze detection.');
+        return false;
+      }
+    
+      // Calculate horizontal distances
+      const distLeft = Math.abs(noseTip.x - leftEye.x);
+      const distRight = Math.abs(rightEye.x - noseTip.x);
+    
+      console.log('distLeft:', distLeft);
+      console.log('distRight:', distRight);
+    
+      // Calculate the ratio
+      const ratio = distLeft / distRight;
+      console.log('Ratio:', ratio);
+    
+      // Set a threshold for considering the face to be looking straight
+      const ratioThreshold = 0.40; // Adjust based on testing
+      const isLookingStraight = Math.abs(ratio - 1) < ratioThreshold;
+    
+      return isLookingStraight;
+    };
+    
+    runFaceMesh();
 
     return () => {
       isMounted = false;
-      // Clear face detection interval
-      clearInterval(interval);
-      // Stop all tracks of the media stream to properly turn off the webcam
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-      } 
 
-      if (workerRef.current) {
-        workerRef.current.terminate();
+      if (animationFrameIdRef.current) {
+        cancelAnimationFrame(animationFrameIdRef.current);
+      }
+
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
       }
     };
   }, [onFaceDetected]);
 
-  return <video ref={videoRef} autoPlay></video>;
+  return (
+    <video
+      ref={videoRef}
+      autoPlay
+      style={{ display: 'none' }}
+    ></video>
+  );
 };
 
 export default WebcamFeed;
