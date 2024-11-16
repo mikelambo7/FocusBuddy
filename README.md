@@ -1,8 +1,8 @@
-**#Focus Buddy**
+**Focus Buddy**
 
 Welcome to Focus Buddy, a web application designed to help users maintain focus during study or work sessions by monitoring their attention through webcam facial recognition. This README provides step-by-step instructions to set up, run, and understand the application.
 
-#**Overview**
+**Overview**
 
 Focus Buddy uses your webcam to detect if you're looking at your screen during a focus session. If it detects that you've looked away for too long, it sends alerts to help you regain focus. It also tracks your focus statistics over time.
 
