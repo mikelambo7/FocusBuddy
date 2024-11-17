@@ -25,9 +25,9 @@ const FocusSession = ({ setSessionActive }) => {
   const handleFaceDetected = useCallback((isDetected) => { // useCallback ensures function is memoized and not recreated on every render
     faceDetectedRef.current = isDetected; // Update the face detected flag
     if (isDetected) {
-      console.log('Face is looking straight at the screen.');
+      console.log('%cFace is looking straight at the screen.', 'color: green');
     } else {
-      console.log('Face is not looking straight.');
+      console.log('%cFace is not looking straight.', 'color: orange');
     }
   }, []);
 
@@ -274,7 +274,6 @@ const FocusSession = ({ setSessionActive }) => {
   const focusComparison = () => {
     if (previousSessionFocus !== null && sessionStats) {
       const focusDifference = sessionStats.focusPercent - previousSessionFocus;
-      console.log("HERE");
 
       if (focusDifference > 0) {
         return (
