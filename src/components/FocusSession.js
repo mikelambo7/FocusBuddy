@@ -128,7 +128,7 @@ const FocusSession = ({ setSessionActive }) => {
 
     // Check every second to see if face is detected
     const interval = setInterval(() => {
-      if (!faceDetectedRef.current) {
+      if (!faceDetectedRef.current && !sessionStats) {
         // Increment the noFaceTime when no face is detected
         noFaceTimeRef.current += 1;
         setTotalUnfocusedTime((prevTime) => prevTime + 1); // Increment unfocused time by 1 second
@@ -153,7 +153,7 @@ const FocusSession = ({ setSessionActive }) => {
     }, 1000); // Check every second
 
     return () => clearInterval(interval); // Clean up interval on unmount
-  }, [NO_FACE_THRESHOLD_2]);
+  }, [NO_FACE_THRESHOLD_2, sessionStats]);
 
   useEffect(() => {
     setStartTime(new Date()); // Set the session's start time as the current time
