@@ -1,7 +1,8 @@
 /* global cv */
-// Load OpenCV.js library into the Web Worker 
-importScripts('https://docs.opencv.org/4.10.0/opencv.js'); // self refers to the webworker itself
-// Utility function to load the classifier
+// Load OpenCV.js library
+importScripts('https://docs.opencv.org/4.10.0/opencv.js');
+
+// Utility function to load cascade files
 function loadCascadeFile(url, filename, callback) {
   let request = new XMLHttpRequest();
   request.open('GET', url, true);
@@ -17,34 +18,68 @@ function loadCascadeFile(url, filename, callback) {
   };
   request.send();
 }
-// Use the function to load the classifier
+
 cv.onRuntimeInitialized = () => {
   loadCascadeFile('/haarcascade_frontalface_default.xml', 'haarcascade_frontalface_default.xml', () => {
-    // Loads a pre-trained face detection model into the classifier that can detect faces in images
-    let classifier = new cv.CascadeClassifier();
-    classifier.load('haarcascade_frontalface_default.xml');
-    // Set up the message handler
-    self.onmessage = function (e) {
-      // Obtain the image data that needs to be processed for face detection
-      const imageData = e.data;
-      // Converts the ImageData object into an OpenCV Mat (matrix) object which prepares it for processing with OpenCV functions
-      let src = cv.matFromImageData(imageData);
-      // Initializes a new, empty Mat object to hold the grayscale version of the image
-      let gray = new cv.Mat();
-      // Converts the source image (src) from RGBA color space to grayscale
-      cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
-      // Initializes a new RectVector object to store the bounding rectangles of detected faces.
-      let faces = new cv.RectVector();
-      // Runs the face detection algorithm on the grayscale image.
-      // Detects faces within the image and store their bounding boxes in the faces vector.
-      classifier.detectMultiScale(gray, faces);
-      let faceDetected = faces.size() > 0;
-      // Sends a message back to the main thread containing the result of the face detection.
-      postMessage(faceDetected);
-      // Calls the delete() method on OpenCV objects to release the memory they occupy.
-      src.delete();
-      gray.delete();
-      faces.delete();
-    };
+    loadCascadeFile('/haarcascade_eye.xml', 'haarcascade_eye.xml', () => {
+      let faceClassifier = new cv.CascadeClassifier();
+      let eyeClassifier = new cv.CascadeClassifier();
+      faceClassifier.load('haarcascade_frontalface_default.xml');
+      eyeClassifier.load('haarcascade_eye.xml');
+
+      self.onmessage = function (e) {
+        const imageData = e.data;
+        let src = cv.matFromImageData(imageData);
+        let gray = new cv.Mat();
+
+        // Convert image to grayscale
+        cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+
+        // Detect faces
+        let faces = new cv.RectVector();
+        faceClassifier.detectMultiScale(gray, faces, 1.2, 8, 0, new cv.Size(100, 100)); // Adjusted parameters
+
+        let results = [];
+        for (let i = 0; i < faces.size(); ++i) {
+          let face = faces.get(i);
+
+          // Validate face size
+          if (face.width < 100 || face.height < 100) continue; // Skip small faces
+
+          // Extract face region
+          let faceROI = gray.roi(face);
+
+          // Detect eyes within the face region
+          let eyes = new cv.RectVector();
+          eyeClassifier.detectMultiScale(faceROI, eyes, 1.1, 8, 0, new cv.Size(30, 30));
+
+          // Validate eyes
+          if (eyes.size() < 2) {
+            faceROI.delete();
+            eyes.delete();
+            continue; // Skip faces without two eyes
+          }
+
+          let eyeCenters = [];
+          for (let j = 0; j < eyes.size(); ++j) {
+            let eye = eyes.get(j);
+            eyeCenters.push({ x: eye.x + eye.width / 2, y: eye.y + eye.height / 2 });
+          }
+
+          results.push({ face: { x: face.x, y: face.y, width: face.width, height: face.height }, eyes: eyeCenters });
+
+          faceROI.delete();
+          eyes.delete();
+        }
+
+        // Post results if valid detections are found
+        postMessage(results.length > 0 ? results : null);
+
+        // Cleanup
+        src.delete();
+        gray.delete();
+        faces.delete();
+      };
+    });
   });
 };

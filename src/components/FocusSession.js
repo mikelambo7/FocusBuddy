@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import WebcamFeed from './WebcamFeed';
 import WebcamOffscreen from './WebcamOffscreen';
 import ping from './assets/ping.wav';
 import pingSound from './assets/ping_alert.wav';
@@ -14,7 +13,6 @@ const FocusSession = ({ setSessionActive }) => {
   const [sessionStats, setSessionStats] = useState(null);
   const [showNotification, setShowNotification] = useState(false); // Notification displayed for when a session is saved successfully
   const [showConfirmation, setShowConfirmation] = useState(false); // Confirmation modal state
-  const [isHidden, setIsHidden] = useState(document.hidden);
   const noFaceTimeRef = useRef(0); // Ref to track noFaceTime
   const faceDetectedRef = useRef(true); // Tracks face detection status using a ref
   const NO_FACE_THRESHOLD = 5;
@@ -298,19 +296,6 @@ const FocusSession = ({ setSessionActive }) => {
     return null;
   };
 
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      setIsHidden(document.hidden); // Update state based on visibility
-      console.log('Document hidden:', document.hidden);
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
-
   return (
     <div className="focus-session-container">
       {showNotification && (
@@ -357,12 +342,7 @@ const FocusSession = ({ setSessionActive }) => {
 
       {!sessionStats && !showConfirmation && (
         <div className="webcam-feed">
-          {/* Determine which WebcamFeed to render based on document visibility */}
-          {isHidden ? (
-            <WebcamOffscreen onFaceDetected={handleFaceDetected} />
-          ) : (
-            <WebcamFeed onFaceDetected={handleFaceDetected} />
-          )}
+          <WebcamOffscreen onFaceDetected={handleFaceDetected} />
         </div>
       )}
     </div>
