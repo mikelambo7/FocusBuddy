@@ -1,5 +1,4 @@
 /* global cv */
-// Load OpenCV.js library
 importScripts('https://docs.opencv.org/4.10.0/opencv.js');
 
 // Utility function to load cascade files
@@ -37,21 +36,21 @@ cv.onRuntimeInitialized = () => {
 
         // Detect faces
         let faces = new cv.RectVector();
-        faceClassifier.detectMultiScale(gray, faces, 1.2, 8, 0, new cv.Size(100, 100)); // Adjusted parameters
+        faceClassifier.detectMultiScale(gray, faces, 1.2, 3, 0, new cv.Size(50, 50)); // Adjusted parameters
 
         let results = [];
         for (let i = 0; i < faces.size(); ++i) {
           let face = faces.get(i);
 
           // Validate face size
-          if (face.width < 100 || face.height < 100) continue; // Skip small faces
+          if (face.width < 50 || face.height < 50) continue; // Skip small faces
 
           // Extract face region
           let faceROI = gray.roi(face);
 
           // Detect eyes within the face region
           let eyes = new cv.RectVector();
-          eyeClassifier.detectMultiScale(faceROI, eyes, 1.1, 8, 0, new cv.Size(30, 30));
+          eyeClassifier.detectMultiScale(faceROI, eyes, 1.1, 3, 0, new cv.Size(30, 30));
 
           // Validate eyes
           if (eyes.size() < 2) {

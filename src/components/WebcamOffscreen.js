@@ -6,7 +6,6 @@ const WebcamOffscreen = ({ onFaceDetected }) => {
   const workerRef = useRef(null);
 
   useEffect(() => {
-    console.log("WORKING IN BACKGROUND")
     let isMounted = true; // Track if component is still mounted
     // Access webcam
     navigator.mediaDevices.getUserMedia({ video: true })
