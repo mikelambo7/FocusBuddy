@@ -15,7 +15,7 @@ const FocusSession = ({ setSessionActive }) => {
   const [showConfirmation, setShowConfirmation] = useState(false); // Confirmation modal state
   const noFaceTimeRef = useRef(0); // Ref to track noFaceTime
   const faceDetectedRef = useRef(true); // Tracks face detection status using a ref
-  const NO_FACE_THRESHOLD = 5;
+  const NO_FACE_THRESHOLD = 10;
   const NO_FACE_THRESHOLD_2 = (2 * NO_FACE_THRESHOLD);
 
   const alertSoundRef = useRef(new Audio(ping));
