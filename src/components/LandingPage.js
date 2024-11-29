@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import focusingImg from './focusing.png';
 import './LandingPage.css';
+
+const style = {
+  backgroundImage: `url(${focusingImg})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+};
 
 const LandingPage = () => {
   const [showHowItWorks, setShowHowItWorks] = useState(false);
@@ -10,7 +17,7 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="landing-page">
+    <div className="landing-page" style={style}>
       <div className="overlay">
         <h1 className="title-landing">
             <img src="/fb_logo_hd.png" alt="Focus Buddy Logo" className="logo-landing" />

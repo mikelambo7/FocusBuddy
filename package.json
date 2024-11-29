@@ -61,6 +61,7 @@
     "@babel/preset-env": "^7.25.4",
     "@babel/preset-react": "^7.24.7",
     "react-scripts": "^5.0.1",
+    "url-loader": "^4.1.1",
     "worker-loader": "^3.0.8"
   }
 }

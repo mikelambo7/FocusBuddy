@@ -5,6 +5,12 @@ import { auth } from './firebase';
 import './Auth.css'; // Import the shared CSS
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import eye icons
 
+const style = {
+    backgroundImage: `url('/fb_landing.png')`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+};
+
 const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -79,7 +85,7 @@ const SignUp = () => {
     };
 
     return (
-        <div className="signup-page">
+        <div className="signup-page" style={style}>
             <div className="overlay">
                 <div className="signup-card">
                     <h2>Sign Up</h2>

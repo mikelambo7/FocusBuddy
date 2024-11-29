@@ -1,7 +1,4 @@
 .landing-page {
-  background-image: url('/focusing.png');
-  background-size: cover;
-  background-position: center;
   min-height: 100vh;
   color: #ffffff;
   display: flex;
